@@ -1,10 +1,22 @@
 from enum import Enum
 from typing import Iterable, Tuple, Union
 
+import scikit_longitudinal
 from sklearn.metrics import get_scorer
-from sklearn.metrics._scorer import _ProbaScorer, _BaseScorer, _SCORERS
 
-classification_metrics = {"accuracy", "roc_auc", "average_precision", "neg_log_loss"}
+# from sklearn.metrics._scorer import _ProbaScorer, _BaseScorer, _SCORERS, make_scorer
+from sklearn.metrics._scorer import _Scorer, _BaseScorer, make_scorer, _SCORERS
+
+auprc_scorer = make_scorer(scikit_longitudinal.auprc_score, needs_proba=True)
+_SCORERS["auprc"] = auprc_scorer
+
+classification_metrics = {
+    "accuracy",
+    "roc_auc",
+    "average_precision",
+    "neg_log_loss",
+    "auprc",
+}
 for metric in ["precision", "recall", "f1"]:
     for average in ["macro", "micro", "samples", "weighted"]:
         classification_metrics.add(f"{metric}_{average}")
@@ -42,8 +54,8 @@ class Metric:
         self.scorer = scorer
         self.name = reversed_scorers[repr(scorer)]
         self.requires_probabilities = (
-            isinstance(scorer, _ProbaScorer) or self.name == "roc_auc"
-        )
+            isinstance(scorer, _Scorer) and scorer._response_method == "predict_proba"
+        ) or self.name == "roc_auc"
 
         if self.name in classification_metrics:
             self.task_type = MetricType.CLASSIFICATION
