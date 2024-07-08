@@ -1,0 +1,135 @@
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[project]
+name = "gama"
+description = "A package for automated machine learning based on scikit-learn."
+readme = "README.md"
+authors = [
+    { name = "Pieter Gijsbers", email = "p.gijsbers@tue.nl" },
+    { name = "Provost Simon", email = "s.g.provost@kent.ac.uk" },
+]
+license = { text = "MIT" }
+#keywords = ..
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+]
+
+requires-python = ">=3.9,<3.10"
+dependencies = [
+    "numpy==1.23.3",
+    "scipy>=1.5.0",
+    "pandas<2.0.0,>=1.5.3",
+    "stopit>=1.1.2",
+    "liac-arff>=2.2.2",
+    "category-encoders>=1.2.8",
+    "black>=23.10.1",
+    "psutil",
+    "configspace<1.0.0,>=0.7.1",
+    "smac==2.1.0",
+    "Scikit-longitudinal==0.0.4",
+]
+version = "0.0.1"
+
+[tool.pdm.resolution]
+respect-source-order = true
+excludes = ["scikit-learn"]
+
+[project.optional-dependencies]
+doc = ["sphinx", "sphinx_rtd_theme"]
+test = [
+    "pre-commit==3.2.2",
+    "pytest>=4.4.0",
+    "pytest-mock",
+    "pytest-xdist",
+    "codecov",
+    "pytest-cov",
+]
+experiments = [
+    "seaborn==0.13.2",
+]
+
+[urls]
+github = "https://github.com/openml-labs/GAMA"
+documentation = "https://openml-labs.github.io/gama/"
+"bug tracker" = "https://github.com/openml-labs/gama/issues"
+
+[project.scripts]
+gama = "gama.utilities.cli:main"
+
+[tool.pdm.scripts]
+# Project setup (Note: This has only been tested on Linux && OSX)
+_set_pdm_use_venv = { cmd = "pdm use --venv ${PDM_IN_ENV}" }
+_use_python39.shell = "pdm use \"${AUTOSKLONG_PYTHON_PATH}\""
+_use_python39.env_file = ".env"
+_create_env.shell = "pdm venv create --with-pip ${AUTOSKLONG_PYTHON_VERSION}"
+_create_env.env_file = ".env"
+_check_sklong_vars = {shell = "echo 'Make sure to set the AUTOSKLONG_PYTHON_PATH and AUTOSKLONG_PYTHON_VERSION environment variables'"}
+_set_env_var = {shell = "echo 'could you please run `export PDM_IN_ENV=in-project`'"}
+_activate_env = {cmd = "echo 'could you please activate the environment via `eval $(pdm venv activate (dollar-sign)PDM_IN_ENV)`'"}
+setup_autosklong = {composite = ["_check_sklong_vars", "_create_env", "_set_env_var", "_activate_env"]}
+remove_env = { cmd = "pdm venv remove ${PDM_IN_ENV}" }
+_clean_project = {cmd = "echo could you please deactivate the environment via `conda deactivate` then run `pdm run remove_env`"}
+clean = {composite = ["_check_pdm_vars", "_clean_project"] }
+_install_deps = { cmd = "pdm install --venv ${PDM_IN_ENV} --prod", env_file.override = ".env" }
+_check_pdm_vars = {call = "scripts.pdm.pdm_pre_install:check_pdm_variables"}
+_risky_clean = { shell = "rm -rf pdm.lock __pypackages__" }
+install_prod = {composite = ["_check_pdm_vars", "_set_pdm_use_venv", "_install_deps",]}
+view_env = {cmd = "pdm venv list"}
+build_dist = {cmd = "pdm build"}
+update_lock = {cmd = "pdm lock", env_file.override = ".env"}
+update_lock_dev = {cmd = "pdm lock -d", env_file.override = ".env"}
+
+# Testing and linting (Note: This has only been tested on Linux && OSX)
+_install_dev = { cmd = "pdm install -G experiments -G test -G doc --no-default", env_file.override = ".env" }
+install_dev = {composite = ["_set_pdm_use_venv", "_install_dev"]}
+clean_cache = { shell = "rm -rf htmlcov .pytest_cache .*_cache && find . -type d -name '__pycache__' -exec rm -r {} +" }
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "error",
+    "ignore::sklearn.exceptions.ConvergenceWarning",
+    "ignore::RuntimeWarning",
+    # Block a warning coming from scikit-learn internals about scipy.mode
+    "ignore:.*mode.*:FutureWarning",
+    # We have a CRON job checking for deprecation/future warnings,
+    # but we dont fail on them by default as they should not interfere with most PRs.
+    # We still print to ensure new warnings are not introduced by the change.
+    "default::PendingDeprecationWarning",
+    "default::DeprecationWarning",
+    "default::FutureWarning",
+    # We will (probably) get rid of category_encoders in 22.1+
+    "ignore:::category_encoders.target_encoder",
+]
+
+[tool.ruff]
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401"]
+"bayesian_optimisation.py" = ["E501"]
+
+[tool.mypy]
+# See # https://mypy.readthedocs.io/en/latest/config_file.html
+python_version=3.10
+
+show_column_numbers = true
+
+warn_redundant_casts = true
+warn_unused_ignores = true
+# warn_return_any=True
+# warn_unreachable=True
+
+#disallow_incomplete_defs=True
+#disallow_untyped_defs=True
+
+# Reports any config lines that are not recognized
+warn_unused_configs = true
+
+# Probably want to turn back on later:
+#no_implicit_optional
+ignore_missing_imports = true
+
+# Following configuration are default, but made explicit:
+warn_no_return = true
