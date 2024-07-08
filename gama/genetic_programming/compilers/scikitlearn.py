@@ -1,9 +1,10 @@
-from datetime import datetime
 import logging
 import os
 import time
+from datetime import datetime
 from typing import Callable, Tuple, Optional, Sequence
 
+import numpy as np
 import stopit
 from sklearn.base import TransformerMixin, is_classifier
 from sklearn.model_selection import (
@@ -12,13 +13,12 @@ from sklearn.model_selection import (
     check_cv,
     StratifiedShuffleSplit,
 )
-from sklearn.pipeline import Pipeline
 
+from gama.GamaPipeline import GamaPipelineTypeUnion, GamaPipeline, GamaPipelineType
+from gama.genetic_programming.components import Individual, PrimitiveNode, Fitness
 from gama.utilities.evaluation_library import Evaluation
 from gama.utilities.generic.stopwatch import Stopwatch
-import numpy as np
 from gama.utilities.metrics import Metric
-from gama.genetic_programming.components import Individual, PrimitiveNode, Fitness
 
 log = logging.getLogger(__name__)
 
@@ -34,14 +34,24 @@ def compile_individual(
     individual: Individual,
     _parameter_checks=None,
     preprocessing_steps: Optional[Sequence[Tuple[str, TransformerMixin]]] = None,
-) -> Pipeline:
+    gama_pipeline_type: Optional[GamaPipelineTypeUnion] = GamaPipelineType.ScikitLearn,
+    *args,
+    **kwargs,
+) -> GamaPipelineTypeUnion:
     steps = [
         (str(i), primitive_node_to_sklearn(primitive))
         for i, primitive in enumerate(individual.primitives)
     ]
     if preprocessing_steps:
         steps += list(reversed(preprocessing_steps))
-    return Pipeline(list(reversed(steps)))
+    if gama_pipeline_type:
+        return GamaPipeline(
+            list(reversed(steps)),
+            pipeline_type=gama_pipeline_type,
+            *args,
+            **kwargs,  # type: ignore
+        )
+    return GamaPipeline(list(reversed(steps)))
 
 
 def object_is_valid_pipeline(o: object) -> bool:

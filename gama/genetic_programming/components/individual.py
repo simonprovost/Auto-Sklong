@@ -1,13 +1,14 @@
 import uuid
 from typing import List, Callable, Optional, Dict, Any
 
-from sklearn.pipeline import Pipeline
 
 from .fitness import Fitness
 from .primitive_node import PrimitiveNode
 from .terminal import Terminal
 
 import ConfigSpace as cs
+
+from ...GamaPipeline import GamaPipelineTypeUnion
 
 
 class Individual:
@@ -44,7 +45,7 @@ class Individual:
         )
 
     @property
-    def pipeline(self) -> Pipeline:
+    def pipeline(self) -> GamaPipelineTypeUnion:
         """Calls the `to_pipeline` method on itself."""
         if self._to_pipeline is None:
             raise AttributeError(

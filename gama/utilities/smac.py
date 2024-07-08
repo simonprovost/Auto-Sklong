@@ -3,11 +3,6 @@ from typing import Any, Optional
 
 import ConfigSpace
 from ConfigSpace import Configuration
-from gama.genetic_programming.operations import _config_to_primitive_node
-
-from gama.genetic_programming.operator_set import OperatorSet
-
-from gama.genetic_programming.components import Individual
 from smac import (
     Scenario,
     AlgorithmConfigurationFacade,
@@ -25,6 +20,14 @@ from smac.initial_design import (
     SobolInitialDesign,
     LatinHypercubeInitialDesign,
 )
+from smac.main.config_selector import ConfigSelector
+
+from gama.genetic_programming.components import Individual
+from gama.genetic_programming.operations import _config_to_primitive_node
+from gama.genetic_programming.longitudinal.operations_longitudinal import (
+    _config_to_longitudinal_primitive_node,
+)
+from gama.genetic_programming.operator_set import OperatorSet
 
 COMPONENTS_MAPPING = {
     "initial_design": {
@@ -111,6 +114,8 @@ def get_smac(
             scenario=scenario,
             initial_design=initial_design,
             target_function=dummy_smac_train,
+            logging_level=0,
+            config_selector=ConfigSelector(scenario, retries=1000),
         )
 
     return facade
@@ -148,6 +153,37 @@ def config_to_individual(
         max_length = 1
     return Individual(
         main_node=_config_to_primitive_node(
+            config=config,
+            config_meta=config_space.meta,
+            conditions=config_space.get_conditions(),
+            config_length=max_length,
+        ),
+        to_pipeline=operations._safe_compile or operations._compile,
+    )
+
+
+def config_to_longitudinal_individual(
+    config: Configuration,
+    operations: OperatorSet,
+) -> Individual:
+    """Convert a SMAC configuration to a GAMA individual."""
+    if config is None:
+        raise ValueError(
+            "BayesianOptimisation: config_to_individual received a None config."
+        )
+    if (config_space := operations.get_search_space()) is None:  # type: ignore
+        raise ValueError(
+            "BayesianOptimisation: Operations.get_search_space() returned None."
+        )
+    if (
+        "preprocessors" in config_space.meta
+        and config_space.meta["preprocessors"] in config.keys()
+    ):
+        max_length = 2
+    else:
+        max_length = 1
+    return Individual(
+        main_node=_config_to_longitudinal_primitive_node(
             config=config,
             config_meta=config_space.meta,
             conditions=config_space.get_conditions(),

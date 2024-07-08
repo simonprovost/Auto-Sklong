@@ -9,6 +9,7 @@ import pandas as pd
 from sklearn.base import TransformerMixin
 from sklearn.preprocessing import OneHotEncoder
 
+from gama.GamaPipeline import GamaPipelineTypeUnion, GamaPipelineType
 from gama.genetic_programming.components import Individual
 from gama.postprocessing.base_post_processing import BasePostProcessing
 from gama.utilities.evaluation_library import EvaluationLibrary, Evaluation
@@ -82,7 +83,11 @@ class EnsemblePostProcessing(BasePostProcessing):
         return self._ensemble
 
     def to_code(
-        self, preprocessing: Optional[Sequence[Tuple[str, TransformerMixin]]] = None
+        self,
+        preprocessing: Optional[Sequence[Tuple[str, TransformerMixin]]] = None,
+        gama_pipeline_type: Optional[
+            GamaPipelineTypeUnion
+        ] = GamaPipelineType.ScikitLearn,
     ) -> str:
         if isinstance(self._ensemble, EnsembleClassifier):
             voter = "VotingClassifier"
@@ -93,12 +98,15 @@ class EnsemblePostProcessing(BasePostProcessing):
 
         imports = {
             f"from sklearn.ensemble import {voter}",
-            "from sklearn.pipeline import Pipeline",
         }
+        if gama_pipeline_type:
+            imports.add(GamaPipelineType(gama_pipeline_type).required_import)
 
         pipelines = []
         for i, (model, weight) in enumerate(self._ensemble._models.values()):
-            ind_imports, steps = imports_and_steps_for_individual(model.individual)
+            ind_imports, steps = imports_and_steps_for_individual(
+                model.individual, gama_pipeline_type
+            )
             imports = imports.union(ind_imports)
             pipeline_name = f"pipeline_{i}"
             pipelines.append(format_pipeline(steps, name=pipeline_name))

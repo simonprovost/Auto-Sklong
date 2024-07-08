@@ -1,19 +1,19 @@
 import copy
-from typing import List, Optional, Any, Tuple, Union
 import random
+from typing import List, Optional, Any, Union, Callable, Tuple
 
 import ConfigSpace as cs
 
 from gama.genetic_programming.components import (
     Primitive,
-    Terminal,
     PrimitiveNode,
     DATA_TERMINAL,
+    Terminal,
 )
 from gama.utilities.config_space import (
-    get_estimator_by_name,
-    get_hyperparameter_sklearn_name,
     get_internal_output_types,
+    get_hyperparameter_sklearn_name,
+    get_estimator_by_name,
 )
 
 
@@ -46,16 +46,24 @@ def random_primitive_node(
         (
             preprocessor_primitive,
             preprocessor_terminals,
-        ) = _config_preprocessor_to_primitive_node(
-            config, config_space.meta, config_space.get_conditions()
+        ) = _config_component_to_primitive_node(
+            "preprocessors",
+            config,
+            config_space.meta,
+            config_space.get_conditions(),
+            ["estimators", "preprocessors"],
         )
         return PrimitiveNode(
             preprocessor_primitive,
             data_node=DATA_TERMINAL,
             terminals=preprocessor_terminals,
         )
-    estimator_primitive, estimator_terminals = _config_estimator_to_primitive_node(
-        config, config_space.meta, config_space.get_conditions()
+    estimator_primitive, estimator_terminals = _config_component_to_primitive_node(
+        "estimators",
+        config,
+        config_space.meta,
+        config_space.get_conditions(),
+        ["estimators", "preprocessors"],
     )
     return PrimitiveNode(
         primitive=estimator_primitive,
@@ -77,6 +85,137 @@ def create_random_expression(
         conditions=config_space.get_conditions(),
         config_length=individual_length,
     )
+
+
+def _config_to_primitive_node(
+    config: cs.Configuration,
+    config_meta: dict,
+    conditions: List[Any],
+    config_length: Optional[int] = None,
+) -> PrimitiveNode:
+    """Create a PrimitiveNode from a configuration. If config_length is specified, the
+    PrimitiveNode will have at most config_length PrimitiveNodes."""
+    if isinstance(config_length, int) and config_length <= 1:
+        estimator_primitive, estimator_terminals = _config_component_to_primitive_node(
+            "estimators",
+            config,
+            config_meta,
+            conditions,
+            ["estimators", "preprocessors"],
+        )
+        return PrimitiveNode(
+            estimator_primitive, data_node=DATA_TERMINAL, terminals=estimator_terminals
+        )
+    estimator_primitive, estimator_terminals = _config_component_to_primitive_node(
+        "estimators", config, config_meta, conditions, ["estimators", "preprocessors"]
+    )
+
+    (
+        preprocessor_primitive,
+        preprocessor_terminals,
+    ) = _config_component_to_primitive_node(
+        "preprocessors",
+        config,
+        config_meta,
+        conditions,
+        ["estimators", "preprocessors"],
+    )
+
+    # Create a PrimitiveNode for the preprocessor
+    preprocessor_node = PrimitiveNode(
+        preprocessor_primitive,
+        data_node=DATA_TERMINAL,
+        terminals=preprocessor_terminals,
+    )
+
+    # Create a PrimitiveNode for the classifier and chain it to the preprocessor
+    return PrimitiveNode(
+        estimator_primitive, data_node=preprocessor_node, terminals=estimator_terminals
+    )
+
+
+def _config_component_to_primitive_node(
+    component_type: str,
+    config: cs.Configuration,
+    config_meta: dict,
+    conditions: List[Any],
+    exclude_keys: List[str],
+    output_type: Optional[str] = None,
+    retrieve_estimator: Callable = get_estimator_by_name,
+) -> Tuple[Primitive, List[Terminal]]:
+    """
+    Create a PrimitiveNode from a configuration of type ConfigSpace
+    (estimator or preprocessor).
+
+    This function generalizes the creation of a PrimitiveNode for either an estimator or
+    a preprocessor, based on the component type specified. It creates a Primitive for
+    the selected component, determines the valid hyperparameters for the component
+    based on the conditions, and then creates a Terminal for each valid hyperparameter.
+
+    Parameters
+    ----------
+    component_type : str
+        The type of component (e.g., 'estimators' or 'preprocessors').
+    config : cs.Configuration
+        A configuration of type ConfigSpace.
+    config_meta : dict
+        The meta information of the ConfigSpace.
+    conditions : List[Any]
+        The conditions of the ConfigSpace.
+    exclude_keys : List[str]
+        Keys to exclude when considering hyperparameters.
+    output_type : str, optional
+        The output type of the PrimitiveNode, by default None.
+    """
+    if (
+        component_type not in config_meta
+        or config_meta[component_type] not in config.get_dictionary()
+    ):
+        raise ValueError(
+            f"Configuration {config} does not contain a `{component_type}` ConfigSpace"
+            "Hyperparameter. Cannot construct PrimitiveNode."
+        )
+
+    if output_type is None:
+        output_type = component_type
+
+    # Create a Primitive for the selected component
+    component_primitive = Primitive(
+        identifier=retrieve_estimator(config[config_meta[component_type]]),
+        output=output_type,
+        input=tuple(
+            get_hyperparameter_sklearn_name(hp)
+            for hp in config
+            if hp not in [config_meta.get(key) for key in exclude_keys]
+        ),
+    )
+
+    # Determine valid hyperparameters for the component based on conditions
+    component_valid_hyperparameters = [
+        name
+        for condition in conditions
+        if (
+            name := extract_valid_hyperparameters(
+                condition, config, config_meta, component_type
+            )
+        )
+        is not None
+    ]
+
+    # Create a Terminal for each valid hyperparameter for the component
+    component_terminals = [
+        Terminal(
+            identifier=get_hyperparameter_sklearn_name(param),
+            value=value,
+            output=get_hyperparameter_sklearn_name(param),
+            config_space_name=param,
+        )
+        for param, value in config.items()
+        if param in component_valid_hyperparameters
+        and param not in [config_meta.get(key) for key in exclude_keys]
+    ]
+
+    return component_primitive, component_terminals
 
 
 def extract_valid_hyperparameters(
@@ -127,197 +266,3 @@ def extract_valid_hyperparameters(
             ):
                 return component.child.name
     return None
-
-
-def _config_estimator_to_primitive_node(
-    config: cs.Configuration,
-    config_meta: dict,
-    conditions: List[Any],
-    output_type: Optional[str] = None,
-) -> Tuple[Primitive, List[Terminal]]:
-    """Create a PrimitiveNode from a configuration of type ConfigSpace (estimator).
-
-    Creates a PrimitiveNode from a configuration of type ConfigSpace. Focuses on
-    the estimator part of the configuration. It starts by creating a Primitive for
-    the selected estimator. Then it determines the valid hyperparameters for the
-    estimator based on the conditions. Finally, it creates a Terminal for each valid
-    hyperparameter for the estimator.
-
-    Parameters
-    ----------
-    config : cs.Configuration
-        A configuration of type ConfigSpace.
-    config_meta : dict
-        The meta information of the ConfigSpace.
-    conditions : List[Any]
-        The conditions of the ConfigSpace.
-    output_type : str, optional
-        The output type of the PrimitiveNode, by default None.
-    """
-    if (
-        "estimators" not in config_meta
-        or config_meta["estimators"] not in config.get_dictionary()
-    ):
-        raise ValueError(
-            f"Configuration {config} does not contain an `estimator` ConfigSpace"
-            f"Hyperparameter. Cannot construct estimator PrimitiveNode."
-        )
-    if output_type is None:
-        output_type = "estimators"
-
-    # Create a Primitive for the selected classifier
-    estimator_primitive = Primitive(
-        identifier=get_estimator_by_name(config[config_meta["estimators"]]),
-        output=output_type,
-        input=tuple(
-            get_hyperparameter_sklearn_name(hp)
-            for hp in config
-            if hp
-            not in [
-                config_meta["estimators"],
-                config_meta.get("preprocessors"),
-            ]
-        ),
-    )
-
-    # Determine valid hyperparameters for estimators based on conditions
-    estimator_valid_hyperparameters = [
-        name
-        for condition in conditions
-        if (
-            name := extract_valid_hyperparameters(
-                condition, config, config_meta, "estimators"
-            )
-        )
-        is not None
-    ]
-
-    # Create a Terminal for each valid hyperparameter for estimators
-    estimator_terminals = [
-        Terminal(
-            identifier=get_hyperparameter_sklearn_name(param),
-            value=value,
-            output=get_hyperparameter_sklearn_name(param),
-            config_space_name=param,
-        )
-        for param, value in config.items()
-        if param in estimator_valid_hyperparameters
-        and param
-        not in [
-            config_meta["estimators"],
-            config_meta.get("preprocessors"),
-        ]
-    ]
-
-    return estimator_primitive, estimator_terminals
-
-
-def _config_preprocessor_to_primitive_node(
-    config: cs.Configuration,
-    config_meta: dict,
-    conditions: List[Any],
-    output_type: Optional[str] = None,
-) -> Tuple[Primitive, List[Terminal]]:
-    """Create a PrimitiveNode from a configuration of type ConfigSpace (preprocessor).
-
-    Creates a PrimitiveNode from a configuration of type ConfigSpace. Focuses on
-    the preprocessor part of the configuration. It starts by creating a Primitive for
-    the selected preprocessor. Then it determines the valid hyperparameters for the
-    preprocessor based on the conditions. Finally, it creates a Terminal for each
-    valid hyperparameter for the preprocessor.
-
-    Parameters
-    ----------
-    config : cs.Configuration
-        A configuration of type ConfigSpace.
-    config_meta : dict
-        The meta information of the ConfigSpace.
-    conditions : List[Any]
-        The conditions of the ConfigSpace.
-    output_type : str, optional
-        The output type of the PrimitiveNode, by default None.
-    """
-    if (
-        "preprocessors" not in config_meta
-        or config_meta["preprocessors"] not in config.get_dictionary()
-    ):
-        raise ValueError(
-            f"Configuration {config} does not contain an `preprocessor` ConfigSpace"
-            f"Hyperparameter. Cannot construct preprocessor PrimitiveNode."
-        )
-    if output_type is None:
-        output_type = "preprocessors"
-
-    # Create a Primitive for the selected preprocessor
-    preprocessor_primitive = Primitive(
-        identifier=get_estimator_by_name(config[config_meta["preprocessors"]]),
-        output=output_type,
-        input=tuple(
-            get_hyperparameter_sklearn_name(hp)
-            for hp in config
-            if hp not in [config_meta.get("estimators"), config_meta["preprocessors"]]
-        ),
-    )
-
-    # Determine valid hyperparameters for preprocessor based on conditions
-    preprocessor_valid_hyperparameters = [
-        name
-        for condition in conditions
-        if (
-            name := extract_valid_hyperparameters(
-                condition, config, config_meta, "preprocessors"
-            )
-        )
-        is not None
-    ]
-
-    # Create a Terminal for each valid hyperparameter for preprocessor
-    preprocessor_terminals = [
-        Terminal(
-            identifier=get_hyperparameter_sklearn_name(param),
-            value=value,
-            output=get_hyperparameter_sklearn_name(param),
-            config_space_name=param,
-        )
-        for param, value in config.items()
-        if param in preprocessor_valid_hyperparameters
-        and param not in [config_meta.get("estimators"), config_meta["preprocessors"]]
-    ]
-
-    return preprocessor_primitive, preprocessor_terminals
-
-
-def _config_to_primitive_node(
-    config: cs.Configuration,
-    config_meta: dict,
-    conditions: List[Any],
-    config_length: Optional[int] = None,
-) -> PrimitiveNode:
-    """Create a PrimitiveNode from a configuration. If config_length is specified, the
-    PrimitiveNode will have at most config_length PrimitiveNodes."""
-    if isinstance(config_length, int) and config_length <= 1:
-        estimator_primitive, estimator_terminals = _config_estimator_to_primitive_node(
-            config, config_meta, conditions
-        )
-        return PrimitiveNode(
-            estimator_primitive, data_node=DATA_TERMINAL, terminals=estimator_terminals
-        )
-    estimator_primitive, estimator_terminals = _config_estimator_to_primitive_node(
-        config, config_meta, conditions
-    )
-    (
-        preprocessor_primitive,
-        preprocessor_terminals,
-    ) = _config_preprocessor_to_primitive_node(config, config_meta, conditions)
-
-    # Create a PrimitiveNode for the preprocessor
-    preprocessor_node = PrimitiveNode(
-        preprocessor_primitive,
-        data_node=DATA_TERMINAL,
-        terminals=preprocessor_terminals,
-    )
-
-    # Create a PrimitiveNode for the classifier and chain it to the preprocessor
-    return PrimitiveNode(
-        estimator_primitive, data_node=preprocessor_node, terminals=estimator_terminals
-    )

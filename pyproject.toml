@@ -108,6 +108,7 @@ filterwarnings = [
 
 [tool.ruff.per-file-ignores]
 "__init__.py" = ["F401"]
+"bayesian_optimisation.py" = ["E501"]
 
 [tool.mypy]
 # See # https://mypy.readthedocs.io/en/latest/config_file.html

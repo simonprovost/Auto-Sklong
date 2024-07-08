@@ -49,7 +49,7 @@ def mut_replace_terminal(
     while True:
         new_terminal_value = config_space.get_hyperparameter(
             old.config_space_name
-        ).sample(np.random.RandomState(42))
+        ).sample(np.random.RandomState())
         if new_terminal_value != old.value:
             break
 

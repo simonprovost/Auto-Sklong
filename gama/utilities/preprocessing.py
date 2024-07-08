@@ -4,7 +4,7 @@ import category_encoders as ce
 import pandas as pd
 from sklearn.base import TransformerMixin
 from sklearn.impute import SimpleImputer
-from sklearn.pipeline import Pipeline
+from gama.GamaPipeline import GamaPipeline, GamaPipelineTypeUnion, GamaPipelineType
 
 log = logging.getLogger(__name__)
 
@@ -43,8 +43,10 @@ def select_categorical_columns(
 
 
 def basic_encoding(
-    x: pd.DataFrame, is_classification: bool
-) -> Tuple[pd.DataFrame, TransformerMixin]:
+    x: pd.DataFrame,
+    is_classification: bool,
+    gama_pipeline_type: Optional[GamaPipelineTypeUnion] = GamaPipelineType.ScikitLearn,
+) -> Tuple[pd.DataFrame, GamaPipelineTypeUnion]:
     """Perform 'basic' encoding of categorical features.
 
     Specifically, perform:
@@ -61,8 +63,17 @@ def basic_encoding(
         ("ord-enc", ce.OrdinalEncoder(cols=ord_features, drop_invariant=True)),
         ("oh-enc", ce.OneHotEncoder(cols=leq_10_features, handle_missing="value")),
     ]
-    encoding_pipeline = Pipeline(encoding_steps)
-    x_enc = encoding_pipeline.fit_transform(x, y=None)  # Is this dangerous?
+    if gama_pipeline_type:
+        encoding_pipeline = GamaPipeline(
+            encoding_steps, pipeline_type=gama_pipeline_type
+        )
+    else:
+        encoding_pipeline = GamaPipeline(encoding_steps)
+    if not hasattr(encoding_pipeline, "fit_transform"):
+        raise ValueError(
+            f"Pipeline {encoding_pipeline} does not have a fit_transform method."
+        )
+    x_enc = encoding_pipeline.fit_transform(x, y=None)
     return x_enc, encoding_pipeline
 
 

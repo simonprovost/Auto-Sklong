@@ -28,9 +28,9 @@ import numpy as np
 import stopit
 from ConfigSpace import ForbiddenEqualsClause
 from sklearn.base import TransformerMixin
-from sklearn.pipeline import Pipeline
 
 import gama.genetic_programming.compilers.scikitlearn
+from gama.GamaPipeline import GamaPipelineTypeUnion, GamaPipelineType
 from gama.genetic_programming.components import Individual, Fitness
 from gama.search_methods.base_search import BaseSearch
 from gama.utilities.evaluation_library import EvaluationLibrary, Evaluation
@@ -100,6 +100,7 @@ class Gama(ABC):
         store: str = "logs",
         config: None = None,
         preset: str = "simple",
+        gama_pipeline_type: GamaPipelineType = GamaPipelineType.ScikitLearn,
     ):
         """
 
@@ -201,6 +202,8 @@ class Gama(ABC):
         if not output_directory:
             output_directory = f"gama_{str(uuid.uuid4())}"
         self.output_directory = os.path.abspath(os.path.expanduser(output_directory))
+        if hasattr(search, "_output_directory"):
+            search._output_directory = self.output_directory
 
         if not os.path.exists(self.output_directory):
             os.mkdir(self.output_directory)
@@ -274,15 +277,18 @@ class Gama(ABC):
         self._search_method: BaseSearch = search
         self._post_processing = post_processing
         self._store = store
+        self._gama_pipeline_type = gama_pipeline_type
 
         if random_state is not None:
             random.seed(random_state)
             np.random.seed(random_state)
             search_space.seed(random_state)
+            if hasattr(search, "random_state"):
+                search.random_state = random_state
 
         self._x: Optional[pd.DataFrame] = None
         self._y: Optional[pd.DataFrame] = None
-        self._basic_encoding_pipeline: Optional[Pipeline] = None
+        self._basic_encoding_pipeline: Optional[GamaPipelineTypeUnion] = None
         self._fixed_pipeline_extension: List[Tuple[str, TransformerMixin]] = []
         self._inferred_dtypes: List[Type] = []
         self.model: object = None
@@ -335,7 +341,10 @@ class Gama(ABC):
                 config_space=self.search_space,
                 max_length=max_start_length,
             ),
-            compile_=compile_individual,
+            compile_=partial(
+                compile_individual,
+                gama_pipeline_type=self._gama_pipeline_type,
+            ),
             eliminate=eliminate_from_pareto,
             evaluate_callback=self._on_evaluation_completed,
             completed_evaluations=self._evaluation_library.lookup,
@@ -355,6 +364,9 @@ class Gama(ABC):
         if which in ["evaluations", "all"] and os.path.exists(cache_directory):
             shutil.rmtree(cache_directory)
         if which == "all":
+            for file in os.listdir(self.output_directory):
+                if os.path.isdir(os.path.join(self.output_directory, file)):
+                    shutil.rmtree(os.path.join(self.output_directory, file))
             os.rmdir(self.output_directory)
 
     def _np_to_matching_dataframe(self, x: np.ndarray) -> pd.DataFrame:
@@ -517,6 +529,8 @@ class Gama(ABC):
         x: Union[pd.DataFrame, np.ndarray],
         y: Union[pd.DataFrame, pd.Series, np.ndarray],
         warm_start: Optional[List[Individual]] = None,
+        basic_encoding_step: Optional[bool] = True,
+        fixed_encoding_step: Optional[bool] = True,
     ) -> "Gama":
         """Find and fit a model to predict target y from X.
 
@@ -546,12 +560,16 @@ class Gama(ABC):
             x, self._y = format_x_y(x, y)
             self._inferred_dtypes = x.dtypes
             is_classification = hasattr(self, "_label_encoder")
-            self._x, self._basic_encoding_pipeline = basic_encoding(
-                x, is_classification
-            )
-            self._fixed_pipeline_extension = basic_pipeline_extension(
-                self._x, is_classification
-            )
+            if basic_encoding_step:
+                self._x, self._basic_encoding_pipeline = basic_encoding(
+                    x, is_classification, self._gama_pipeline_type
+                )
+            else:
+                self._x = x
+            if fixed_encoding_step:
+                self._fixed_pipeline_extension = basic_pipeline_extension(
+                    self._x, is_classification
+                )
             self._operator_set._safe_compile = partial(
                 self._operator_set._compile,
                 preprocessing_steps=self._fixed_pipeline_extension,
@@ -599,7 +617,11 @@ class Gama(ABC):
                 and self._x.shape[1] > 50
                 and "preprocessors" in self.search_space.meta
             ):
-                log.info("Data has too many features to include PolynomialFeatures")
+                log.info(
+                    "Data has too many features to include PolynomialFeatures. "
+                    "Adding a forbidden clause upon PolynomialFeatures if it is "
+                    "in the search space."
+                )
                 if (
                     "PolynomialFeatures"
                     in self.search_space.get_hyperparameter(
@@ -742,10 +764,13 @@ class Gama(ABC):
 
         if self._basic_encoding_pipeline is not None:
             script_text = self._post_processing.to_code(
-                self._basic_encoding_pipeline.steps + self._fixed_pipeline_extension
+                self._basic_encoding_pipeline.steps + self._fixed_pipeline_extension,
+                self._gama_pipeline_type,
             )
         else:
-            script_text = self._post_processing.to_code(self._fixed_pipeline_extension)
+            script_text = self._post_processing.to_code(
+                self._fixed_pipeline_extension, self._gama_pipeline_type
+            )
 
         if file:
             with open(file, "w") as fh:

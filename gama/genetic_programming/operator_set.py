@@ -5,11 +5,11 @@ import ConfigSpace
 
 from gama.genetic_programming.components.primitive_node import PrimitiveNode
 
-from sklearn.pipeline import Pipeline
 
 from gama.utilities.evaluation_library import Evaluation
 
 from .components import Individual
+from ..GamaPipeline import GamaPipelineTypeUnion
 
 log = logging.getLogger(__name__)
 
@@ -23,7 +23,7 @@ class OperatorSet:
         mate: Callable[[Individual, Individual], Tuple[Individual, Individual]],
         create_from_population: Callable[[Any], List[Individual]],
         create_new: Callable[[], PrimitiveNode],
-        compile_: Callable[[Individual], Pipeline],
+        compile_: Callable[[Individual], GamaPipelineTypeUnion],
         eliminate: Callable[[List[Individual], int], List[Individual]],
         evaluate_callback: Callable[[Evaluation], None],
         max_retry: int = 50,
@@ -36,7 +36,9 @@ class OperatorSet:
         self._create_from_population = create_from_population
         self._create_new = create_new
         self._compile = compile_
-        self._safe_compile: Optional[Callable[[Individual], Pipeline]] = None
+        self._safe_compile: Optional[
+            Callable[[Individual], GamaPipelineTypeUnion]
+        ] = None
         self._eliminate = eliminate
         self._max_retry = max_retry
         self._evaluate = None

@@ -4,6 +4,7 @@ from typing import List, Union, Dict, Any, Tuple, TYPE_CHECKING, Sequence, Optio
 import pandas as pd
 from sklearn.base import TransformerMixin
 
+from gama.GamaPipeline import GamaPipelineTypeUnion, GamaPipelineType
 from gama.genetic_programming.components import Individual
 
 
@@ -87,7 +88,11 @@ class BasePostProcessing(ABC):
         raise NotImplementedError("Method must be implemented by child class.")
 
     def to_code(
-        self, preprocessing: Optional[Sequence[Tuple[str, TransformerMixin]]] = None
+        self,
+        preprocessing: Optional[Sequence[Tuple[str, TransformerMixin]]] = None,
+        gama_pipeline_type: Optional[
+            GamaPipelineTypeUnion
+        ] = GamaPipelineType.ScikitLearn,
     ) -> str:
         """Generate Python code to reconstruct a pipeline that constructs the model.
 

@@ -9,6 +9,7 @@ import ConfigSpace as cs
 from ...utilities.config_space import (
     get_hyperparameter_sklearn_name,
     get_estimator_by_name,
+    get_longitudinal_estimator_by_name,
 )
 
 
@@ -63,6 +64,11 @@ class PrimitiveNode:
             data_node_copy = DATA_TERMINAL  # type: Union[str, PrimitiveNode]
         elif isinstance(self._data_node, PrimitiveNode):
             data_node_copy = self._data_node.copy()
+        else:
+            raise ValueError(
+                f"self._data_node is neither str nor PrimitiveNode, "
+                f"but {type(self._data_node)}"
+            )
         return PrimitiveNode(
             primitive=self._primitive,
             data_node=data_node_copy,
@@ -134,22 +140,47 @@ def find_primitive(
     estimators = config_space.get_hyperparameter(
         config_space.meta["estimators"]
     ).choices
-    preprocessors = []
+    preprocessors = None
     if "preprocessors" in config_space.meta:
         preprocessors = config_space.get_hyperparameter(
             config_space.meta["preprocessors"]
         ).choices
 
-    all_hyperparameters = estimators + preprocessors
+    data_preparation = None
+    if "data_preparation" in config_space.meta:
+        data_preparation = config_space.get_hyperparameter(
+            config_space.meta["data_preparation"]
+        ).choices
+        data_preparation += data_preparation
+
+    all_hyperparameters = []
+    if estimators:
+        all_hyperparameters += estimators
+    if preprocessors:
+        all_hyperparameters += preprocessors
+    if data_preparation:
+        all_hyperparameters += data_preparation
 
     if primitive_string in all_hyperparameters:
-        return Primitive(
-            input=(),
-            output=(
-                "estimators" if primitive_string in estimators else "preprocessors"
-            ),
-            identifier=get_estimator_by_name(primitive_string),
-        )
+        if primitive_string in estimators:
+            output = "estimators"
+        elif primitive_string in preprocessors:
+            output = "preprocessors"
+        else:
+            output = "data_preparation"
+        try:
+            primitive = Primitive(
+                input=(),
+                output=output,
+                identifier=get_estimator_by_name(primitive_string),
+            )
+        except ValueError:
+            primitive = Primitive(
+                input=(),
+                output=output,
+                identifier=get_longitudinal_estimator_by_name(primitive_string),
+            )
+        return primitive
 
     raise IndexError(f"Could not find Primitive of type '{primitive_string}'.")
 

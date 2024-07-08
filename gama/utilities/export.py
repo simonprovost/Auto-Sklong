@@ -2,6 +2,8 @@ import copy
 from typing import Tuple, List, Set, Optional
 
 from sklearn.base import TransformerMixin
+
+from gama.GamaPipeline import GamaPipelineTypeUnion, GamaPipelineType
 from gama.genetic_programming.components import Individual
 
 
@@ -30,6 +32,7 @@ def format_pipeline(steps: List[Tuple[str, str]], name: str = "pipeline") -> str
 
 def imports_and_steps_for_individual(
     individual: Individual,
+    gama_pipeline_type: Optional[GamaPipelineTypeUnion] = GamaPipelineType.ScikitLearn,
 ) -> Tuple[Set[str], List[Tuple[str, str]]]:
     """Determine required imports and steps for the individual's pipeline.
 
@@ -39,7 +42,11 @@ def imports_and_steps_for_individual(
 
     E.g. (["from sklearn.naive_bayes import GaussianNB"], [('0', 'GaussianNB()')])
     """
-    imports = ["from numpy import nan", "from sklearn.pipeline import Pipeline"]
+    imports = [
+        "from numpy import nan",
+    ]
+    if gama_pipeline_type:
+        imports.append(GamaPipelineType(gama_pipeline_type).required_import)
     imports += [format_import(step) for name, step in individual.pipeline.steps]
 
     steps = []
@@ -56,9 +63,10 @@ def imports_and_steps_for_individual(
 def individual_to_python(
     individual: Individual,
     prepend_steps: Optional[List[Tuple[str, TransformerMixin]]] = None,
+    gama_pipeline_type: Optional[GamaPipelineTypeUnion] = GamaPipelineType.ScikitLearn,
 ) -> str:
     """Generate code for the machine learning pipeline represented by `individual`."""
-    imports, steps = imports_and_steps_for_individual(individual)
+    imports, steps = imports_and_steps_for_individual(individual, gama_pipeline_type)
     if prepend_steps is not None:
         steps = prepend_steps + steps
         imports = imports.union({format_import(step) for _, step in prepend_steps})

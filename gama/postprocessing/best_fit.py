@@ -3,6 +3,7 @@ from typing import List, Optional, Sequence, Tuple
 import pandas as pd
 from sklearn.base import TransformerMixin
 
+from gama.GamaPipeline import GamaPipelineTypeUnion, GamaPipelineType
 from gama.genetic_programming.components import Individual
 from gama.postprocessing.base_post_processing import BasePostProcessing
 from gama.utilities.export import (
@@ -27,12 +28,18 @@ class BestFitPostProcessing(BasePostProcessing):
         return self._selected_individual.pipeline.fit(x, y)
 
     def to_code(
-        self, preprocessing: Optional[Sequence[Tuple[str, TransformerMixin]]] = None
+        self,
+        preprocessing: Optional[Sequence[Tuple[str, TransformerMixin]]] = None,
+        gama_pipeline_type: Optional[
+            GamaPipelineTypeUnion
+        ] = GamaPipelineType.ScikitLearn,
     ) -> str:
         if self._selected_individual is None:
             raise RuntimeError("`to_code` can only be called after `post_process`.")
 
-        imports, steps = imports_and_steps_for_individual(self._selected_individual)
+        imports, steps = imports_and_steps_for_individual(
+            self._selected_individual, gama_pipeline_type
+        )
         if preprocessing is not None:
             trans_strs = transformers_to_str([t for _, t in preprocessing])
             names = [name for name, _ in preprocessing]
