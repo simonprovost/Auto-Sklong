@@ -1,33 +1,41 @@
 [build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
 
 [project]
 name = "gama"
 description = "A package for automated machine learning based on scikit-learn."
 readme = "README.md"
-authors= [{name = "Pieter Gijsbers", email="p.gijsbers@tue.nl"}]
-license = {text = "MIT"}
+authors = [
+    { name = "Pieter Gijsbers", email = "p.gijsbers@tue.nl" },
+    { name = "Provost Simon", email = "s.g.provost@kent.ac.uk" },
+]
+license = { text = "MIT" }
 #keywords = ..
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
 ]
 
-dynamic = ["version"]
-requires-python = ">=3.9"
-dependencies = [    
-  "numpy>=1.20.0",
-  "scipy>=1.0.0",
-  "scikit-learn>=1.1.0",
-  "pandas>=1.0",
-  "stopit>=1.1.1",
-  "liac-arff>=2.2.2",
-  "category-encoders>=1.2.8",
-  "black==23.3.0",
-  "psutil",
-  "ConfigSpace>=0.7.1",
+requires-python = ">=3.9,<3.10"
+dependencies = [
+    "numpy==1.23.3",
+    "scipy>=1.5.0",
+    "pandas<2.0.0,>=1.5.3",
+    "stopit>=1.1.2",
+    "liac-arff>=2.2.2",
+    "category-encoders>=1.2.8",
+    "black>=23.10.1",
+    "psutil",
+    "configspace<1.0.0,>=0.7.1",
+    "smac==2.1.0",
+    "Scikit-longitudinal==0.0.4",
 ]
+version = "0.0.1"
+
+[tool.pdm.resolution]
+respect-source-order = true
+excludes = ["scikit-learn"]
 
 [project.optional-dependencies]
 doc = ["sphinx", "sphinx_rtd_theme"]
@@ -39,6 +47,9 @@ test = [
     "codecov",
     "pytest-cov",
 ]
+experiments = [
+    "seaborn==0.13.2",
+]
 
 [urls]
 github = "https://github.com/openml-labs/GAMA"
@@ -48,11 +59,33 @@ documentation = "https://openml-labs.github.io/gama/"
 [project.scripts]
 gama = "gama.utilities.cli:main"
 
-[tool.setuptools.dynamic]
-version = {attr = "gama.__version__.__version__"}
+[tool.pdm.scripts]
+# Project setup (Note: This has only been tested on Linux && OSX)
+_set_pdm_use_venv = { cmd = "pdm use --venv ${PDM_IN_ENV}" }
+_use_python39.shell = "pdm use \"${AUTOSKLONG_PYTHON_PATH}\""
+_use_python39.env_file = ".env"
+_create_env.shell = "pdm venv create --with-pip ${AUTOSKLONG_PYTHON_VERSION}"
+_create_env.env_file = ".env"
+_check_sklong_vars = {shell = "echo 'Make sure to set the AUTOSKLONG_PYTHON_PATH and AUTOSKLONG_PYTHON_VERSION environment variables'"}
+_set_env_var = {shell = "echo 'could you please run `export PDM_IN_ENV=in-project`'"}
+_activate_env = {cmd = "echo 'could you please activate the environment via `eval $(pdm venv activate (dollar-sign)PDM_IN_ENV)`'"}
+setup_autosklong = {composite = ["_check_sklong_vars", "_create_env", "_set_env_var", "_activate_env"]}
+remove_env = { cmd = "pdm venv remove ${PDM_IN_ENV}" }
+_clean_project = {cmd = "echo could you please deactivate the environment via `conda deactivate` then run `pdm run remove_env`"}
+clean = {composite = ["_check_pdm_vars", "_clean_project"] }
+_install_deps = { cmd = "pdm install --venv ${PDM_IN_ENV} --prod", env_file.override = ".env" }
+_check_pdm_vars = {call = "scripts.pdm.pdm_pre_install:check_pdm_variables"}
+_risky_clean = { shell = "rm -rf pdm.lock __pypackages__" }
+install_prod = {composite = ["_check_pdm_vars", "_set_pdm_use_venv", "_install_deps",]}
+view_env = {cmd = "pdm venv list"}
+build_dist = {cmd = "pdm build"}
+update_lock = {cmd = "pdm lock", env_file.override = ".env"}
+update_lock_dev = {cmd = "pdm lock -d", env_file.override = ".env"}
 
-[tool.setuptools.packages.find]
-include = ["gama*"]  # package names should match these glob patterns (["*"] by default)
+# Testing and linting (Note: This has only been tested on Linux && OSX)
+_install_dev = { cmd = "pdm install -G experiments -G test -G doc --no-default", env_file.override = ".env" }
+install_dev = {composite = ["_set_pdm_use_venv", "_install_dev"]}
+clean_cache = { shell = "rm -rf htmlcov .pytest_cache .*_cache && find . -type d -name '__pycache__' -exec rm -r {} +" }
 
 [tool.pytest.ini_options]
 filterwarnings = [

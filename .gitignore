@@ -11,3 +11,10 @@ docs/source/generated/*
 *.ipynb_checkpoints*
 venv/
 smac3_output/*
+gama_pipeline.py
+main.py
+.env
+.venv/**
+__pypackages__/**
+
+.pdm-python
