@@ -1,0 +1,6 @@
+smoke_w1,smoke_w2,cholesterol_w1,cholesterol_w2,age,gender,stroke_w2
+0,1,0,1,45,1,0
+1,1,1,1,50,0,1
+0,0,0,0,55,1,0
+1,1,1,1,60,0,1
+0,1,0,1,65,1,0

@@ -1,26 +1,24 @@
 """ Contains full system tests for GamaClassifier """
+import warnings
+from typing import Type
+
+import ConfigSpace as cs
 import numpy as np
 import pandas as pd
 import pytest
-from typing import Type
-
 from sklearn.datasets import load_wine, load_breast_cancer
 from sklearn.ensemble import VotingClassifier
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, log_loss
-from sklearn.pipeline import Pipeline
+from sklearn.model_selection import train_test_split
 
+from gama import GamaClassifier
 from gama.configuration.configuration_task_test import ClassifierConfigTest
 from gama.configuration.testconfiguration import config_space
-import ConfigSpace as cs
 from gama.postprocessing import EnsemblePostProcessing
 from gama.search_methods import AsynchronousSuccessiveHalving, AsyncEA, RandomSearch
 from gama.search_methods.base_search import BaseSearch
 from gama.search_methods.bayesian_optimisation import BayesianOptimisation
 from gama.utilities.generic.stopwatch import Stopwatch
-from gama import GamaClassifier
-
-import warnings
 
 warnings.filterwarnings("error")
 
@@ -190,7 +188,10 @@ def test_binary_classification_accuracy():
     local = {}
     exec(code, {}, local)
     pipeline = local["pipeline"]  # should be defined in exported code
-    assert isinstance(pipeline, Pipeline)
+    assert pipeline is not None
+    assert hasattr(
+        pipeline, "steps"
+    )  # GamaPipelineTypeUnion is not iterable. Any pipeline should have steps though.
     assert isinstance(pipeline.steps[-1][-1], VotingClassifier)
     pipeline.fit(x, y)
     assert 0.9 < pipeline.score(x, y)
