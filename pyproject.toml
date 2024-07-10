@@ -3,8 +3,8 @@ requires = ["pdm-backend"]
 build-backend = "pdm.backend"
 
 [project]
-name = "gama"
-description = "A package for automated machine learning based on scikit-learn."
+name = "autosklong"
+description = "A package for automated machine learning based on scikit-learn and sklong to tackle the longitudinal machine learning classificationt tasks."
 readme = "README.md"
 authors = [
     { name = "Pieter Gijsbers", email = "p.gijsbers@tue.nl" },
@@ -33,11 +33,19 @@ dependencies = [
 ]
 version = "0.0.1"
 
+[urls]
+github = "https://github.com/simonprovost/Auto-Sklong"
+documentation = ""
+"bug tracker" = "https://github.com/simonprovost/Auto-Sklong/issues"
+
 [tool.pdm.resolution]
 respect-source-order = true
-excludes = ["scikit-learn"]
+excludes = ["scikit-learn", "arff"]
 
-[project.optional-dependencies]
+[tool.pdm]
+distribution = true
+
+[tool.pdm.dev-dependencies]
 doc = ["sphinx", "sphinx_rtd_theme"]
 test = [
     "pre-commit==3.2.2",
@@ -50,11 +58,6 @@ test = [
 experiments = [
     "seaborn==0.13.2",
 ]
-
-[urls]
-github = "https://github.com/openml-labs/GAMA"
-documentation = "https://openml-labs.github.io/gama/"
-"bug tracker" = "https://github.com/openml-labs/gama/issues"
 
 [project.scripts]
 gama = "gama.utilities.cli:main"
@@ -86,6 +89,11 @@ update_lock_dev = {cmd = "pdm lock -d", env_file.override = ".env"}
 _install_dev = { cmd = "pdm install -G experiments -G test -G doc --no-default", env_file.override = ".env" }
 install_dev = {composite = ["_set_pdm_use_venv", "_install_dev"]}
 clean_cache = { shell = "rm -rf htmlcov .pytest_cache .*_cache && find . -type d -name '__pycache__' -exec rm -r {} +" }
+tests_unit = {cmd = "pytest -sv tests/unit"}
+tests_system = {cmd = "pytest -sv tests/system"}
+tests = {composite = ["tests_unit", "tests_system"]}
+pre_commit = {cmd = "pre-commit run --all-files"}
+
 
 [tool.pytest.ini_options]
 filterwarnings = [

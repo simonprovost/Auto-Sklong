@@ -1,90 +1,209 @@
-![GAMA logo](https://github.com/openml-labs/gama/blob/master/images/logos/Logo-With-Grey-Name-Transparent.png)
+<!--suppress HtmlDeprecatedAttribute -->
+<div align="center">
+   <p align="center">
+   <h1 align="center">
+      <br>
+      <a href="https://i.imgur.com/Qu8fIfA.png"><img src="https://i.imgur.com/Qu8fIfA.png" alt="Auto-Sklong" width="200"></a>
+      <br>
+      Auto-Sklong
+      <br>
+   </h1>
+   <h4 align="center">A specialised Python library for Automated Machine Learning (AutoML) of Longitudinal machine learning classification tasks built upon <a href="https://github.com/openml-labs/gama">GAMA</a> </h4>
+   <table align="center">
+      <tr>
+         <td align="center">
+            <h3>⚙️ Project Status</h3>
+         </td>
+         <td align="center">
+            <h3>☎️ Contacts</h3>
+         </td>
+      </tr>
+      <tr>
+         <td valign="top">
+            <!-- Python-related badges table -->
+            <table>
+               <tr>
+                  <table>
+                     <tr>
+                        <td>
+                           <a href="https://github.com/openml-labs/gama"><img src="https://img.shields.io/badge/Fork-GAMA-green?labelColor=Purple&style=for-the-badge&link=https://github.com/openml-labs/gama" alt="Fork" /></a>
+                           <br />
+                           <a href="https://pdm.fming.dev">
+                           <img alt="pdm" src="https://img.shields.io/badge/pdm-managed-blue?style=for-the-badge&logo=python">
+                           </a>
+                        </td>
+                        <td>
+                           <a href="https://pytest.org/">
+                           <img alt="pytest" src="https://img.shields.io/badge/pytest-passing-green?style=for-the-badge&logo=pytest">
+                           </a><br />
+                           <a href="https://codecov.io/gh/Scikit-Longitudinal/Scikit-Longitudinal">
+                           <img alt="Codecov" src="https://img.shields.io/badge/coverage-76%25-brightgreen.svg?style=for-the-badge&logo=appveyor">
+                           </a>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td>
+                           <a href="https://www.pylint.org/">
+                           <img alt="pylint" src="https://img.shields.io/badge/pylint-checked-blue?style=for-the-badge&logo=python">
+                           </a><br />
+                           <a href="https://pre-commit.com/">
+                           <img alt="pre-commit" src="https://img.shields.io/badge/pre--commit-checked-blue?style=for-the-badge&logo=python">
+                           </a>
+                        </td>
+                        <td>
+                           <a href="https://github.com/psf/black">
+                           <img alt="black" src="https://img.shields.io/badge/black-formatted-black?style=for-the-badge&logo=python">
+                           </a><br />
+                           <a href="https://github.com/astral-sh/ruff">
+                           <img alt="Ruff" src="https://img.shields.io/badge/Linter-Ruff-brightgreen?style=for-the-badge">
+                           </a><br />
+                        </td>
+                     </tr>
+                  </table>
+                  <td valign="center">
+                     <table>
+                        <tr>
+                           <td>
+                                <a href="mailto:s.g.provost@kent.ac.uk">
+                                    <img alt="Microsoft Outlook" src="https://upload.wikimedia.org/wikipedia/commons/d/df/Microsoft_Office_Outlook_%282018%E2%80%93present%29.svg" width="40" height="40">
+                                </a><br />
+                                <a href="https://linkedin.com/in/simonprovostdev/">
+                                    <img alt="LinkedIn" src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" width="40" height="40">
+                                </a><br />
+                                <a href="https://stackoverflow.com/users/9814037/simon-provost">
+                                    <img alt="Stack Overflow" src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Stack_Overflow_icon.svg" width="40" height="40">
+                                </a><br />
+                                <a href="https://scholar.google.com/citations?user=Lv_LddYAAAAJ">
+                                    <img alt="Google Scholar" src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Google_Scholar_logo.svg" width="40" height="40">
+                                </a>
+                            </td>
+                        </tr>
+                     </table>
+                  </td>
+               </tr>
+            </table>
+         </td>
+      </tr>
+   </table>
+</div>
 
-**G**eneral **A**utomated **M**achine learning **A**ssistant  
-An automated machine learning tool based on genetic programming.  
-Make sure to check out the [documentation](https://openml-labs.github.io/gama/).
+> 🌟 **Exciting Update**: We're delighted to introduce the brand new v0.1 documentation for `Auto-Sklong`! For a
+> deep dive into the library's capabilities and features,
+> please [visit here](https://simonprovost.github.io/auto-sklong/).
 
-[![Build Status](https://travis-ci.org/openml-labs/gama.svg?branch=master)](https://travis-ci.org/openml-labs/gama)
-[![codecov](https://codecov.io/gh/openml-labs/gama/branch/master/graph/badge.svg)](https://codecov.io/gh/openml-labs/gama)
-[![DOI](http://joss.theoj.org/papers/10.21105/joss.01132/status.svg)](https://doi.org/10.21105/joss.01132)
+> 🎉 **PyPi is available!**: We published `Auto-Sklong`, [here](https://pypi.org/project/Auto-Sklong/)!
 
----
+## <a id="about-the-project"></a>💡 About The Project
 
-GAMA is an AutoML package for end-users and AutoML researchers.
-It generates optimized machine learning pipelines given specific input data and resource constraints.
-A machine learning pipeline contains data preprocessing (e.g. PCA, normalization) as well as a machine learning algorithm (e.g. Logistic Regression, Random Forests), with fine-tuned hyperparameter settings (e.g. number of trees in a Random Forest).
+`Auto-Scikit-Longitudinal` (Auto-Sklong) is an automated machine learning (AutoML) library designed to analyse
+longitudinal data (Classification tasks focussed as of today) using various search methods. Namely,
+`Bayesian Optimisation` via [SMAC3](https://github.com/automl/SMAC3), `Asynchronous Successive Halving`, 
+`Evolutionary Algorithms`, and `Random Search` 
+via [the General Automated Machine Learning Assistant (GAMA)](https://github.com/openml-labs/gama).
 
-To find these pipelines, multiple search procedures have been implemented.
-GAMA can also combine multiple tuned machine learning pipelines together into an ensemble, which on average should help model performance.
-At the moment, GAMA is restricted to classification and regression problems on tabular data.
+`Auto-Sklong` built upon `GAMA`, offers a brand-new search space to tackle the Longitudinal Machine Learning classification problems,
+with a user-friendly interface, similar to the popular `Scikit` paradigm.
 
-In addition to its general use AutoML functionality, GAMA aims to serve AutoML researchers as well.
-During the optimization process, GAMA keeps an extensive log of progress made.
-Using this log, insight can be obtained on the behaviour of the search procedure.
-For example, it can produce a graph that shows pipeline fitness over time:
-![graph of fitness over time](https://github.com/openml-lab/gama/blob/master/docs/source/technical_guide/images/viz.gif)
+Please for further information, visit the [official documentation](https://simonprovost.github.io/scikit-longitudinal/).
 
-*Note: we temporarily disabled support for the GAMA Dashboard, we will add out-of-the-box visualization again later this year.* 
+## <a id="installation"></a>🛠️ Installation
 
-## Installing GAMA
+```shell
+pip install Auto-Sklong
+```
+You could also install different versions of the library by specifying the version number, 
+e.g. `pip install Auto-Sklong==0.0.1`. 
+Refer to [Release Notes](https://github.com/simonprovost/auto-sklong/releases)
 
-You can install GAMA with pip: `pip install gama`
+### 🚀 **What's new compared to GAMA?**
 
-## Minimal Example
+We improved [@PGijsbers'](https://github.com/PGijsbers) open-source `GAMA` initiative to propose a new search space that 
+leverages our other newly-designed library
+[`Scikit-Longitudinal` (Sklong)](https://github.com/simonprovost/scikit-longitudinal) in order to tackle the longitudinal
+classification problems via Combined Algorithm Selection and Hyperparameter Optimization (CASH Optimization).
 
-The following example uses AutoML to find a machine learning pipeline that classifies breast cancer as malign or benign.
-See the documentation for examples in
-[classification](https://openml-labs.github.io/gama/master/user_guide/index.html#classification),
-[regression](https://openml-labs.github.io/gama/master/user_guide/index.html#regression),
-using [ARFF as input](https://openml-labs.github.io/gama/master/user_guide/index.html#using-arff-files).
+Worth noting that it previously was not possible with `GAMA` or any other AutoML libraries to the best of our knowledge
+_(refer to the Related Projects in the
+[official documentation](https://simonprovost.github.io/scikit-longitudinal/) nonetheless)._
 
-```python
-from sklearn.datasets import load_breast_cancer
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import log_loss, accuracy_score
-from gama import GamaClassifier
+While `GAMA` is offering a way to update the search space, we had to improve `GAMA` to support a couple of new features as follow.
+Nonetheless, it is worth-noting that in the coming months, the current version of `Auto-Sklong` might speedy increase due 
+to the following pull requests ongoing on `GAMA`:
 
-if __name__ == '__main__':
-    X, y = load_breast_cancer(return_X_y=True)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, random_state=0)
+- [ ] [ConfigSpace Technology Integration for Enhanced GAMA Configuration and Management 🥇](https://github.com/openml-labs/gama/pull/210)
+- [ ] [Search Methods Enhancements to Avoid Duplicate Evaluated Pipelines 🥈 #211](https://github.com/openml-labs/gama/pull/211)
+- [ ] [SMAC3 Bayesian Optimisation Integration [🆕 Search Method] 🥉 #212](https://github.com/openml-labs/gama/pull/212)
 
-    automl = GamaClassifier(max_total_time=180, store="nothing")
-    print("Starting `fit` which will take roughly 3 minutes.")
-    automl.fit(X_train, y_train)
+As soon as we are able to publish those on `GAMA`, there will be a compatibility refactoring to align 
+`Auto-Sklong` with the most recent version of `GAMA`. As a result, this section will be removed appropriately.
 
-    label_predictions = automl.predict(X_test)
-    probability_predictions = automl.predict_proba(X_test)
+### 💻 Developer Notes
 
-    print('accuracy:', accuracy_score(y_test, label_predictions))
-    print('log loss:', log_loss(y_test, probability_predictions))
-    # the `score` function outputs the score on the metric optimized towards (by default, `log_loss`)
-    print('log_loss', automl.score(X_test, y_test))
+For developers looking to contribute, please refer to the `Contributing` section of `GAMA` [here](https://openml-labs.github.io/gama/master/contributing/index.html)
+and `Scikit-Longitudinal` [here](https://simonprovost.github.io/scikit-longitudinal/contribution/).
+
+## <a id="Supported-Operating-Systems"></a>🛠️ Supported Operating Systems
+
+`Auto-Sklong` is compatible with the following operating systems:
+
+- MacOS  
+- Linux 🐧
+- On Windows 🪟, you are recommended to run the library within a Docker container under a Linux distribution.
+
+## <a id="how-to-use"></a></a>🚀 Getting Started
+
+To perform AutoML on your longitudinal analysis with `Auto-Sklong`, use the following two-easy-steps.
+
+- First, load and prepare  your dataset using the `LongitudinalDataset` class of 
+[`Sklong`](https://simonprovost.github.io/scikit-longitudinal/).
+
+- Second, use the `GamaLongitudinalClassifier` class of `Auto-Sklong`. 
+Following instantiating it set up its `hyperparameters` or let default, you can apply the popular 
+_fit_, _predict_, _prodict_proba_, methods in the same way that `Scikit-learn` 
+does, as shown in the example below. It will then automatically search for the best model and hyperparameters for your dataset.
+
+_Refer to the documentation for more information on the `GamaLongitudinalClassifier` class._
+
+``` py
+from sklearn.metrics import classification_report
+from scikit_longitudinal.data_preparation import LongitudinalDataset
+from gama.GamaLongitudinalClassifier import GamaLongitudinalClassifier
+
+# Load your longitudinal dataset
+dataset = LongitudinalDataset('./stroke.csv')
+dataset.load_data_target_train_test_split(
+  target_column="class_stroke_wave_4",
+)
+
+# Pre-set or manually set your temporal dependencies 
+dataset.setup_features_group(input_data="Elsa")
+
+# Instantiate the AutoML system
+automl = GamaLongitudinalClassifier(
+        features_group=features_group,
+        non_longitudinal_features=non_longitudinal_features,
+        feature_list_names=feature_list_names,
+    )
+
+# Run the AutoML system to find the best model and hyperparameters
+model.fit(dataset.X_train, dataset.y_train)
+
+# Predictions and prediction probabilities
+label_predictions = automl.predict(X_test)
+probability_predictions = automl.predict_proba(X_test)
+
+# Classification report
+print(classification_report(y_test, label_predictions))
+
+# Export a reproducible script of the champion model
+automl.export_script() 
 ```
 
-_note_: By default, GamaClassifier optimizes towards `log_loss`.
+## <a id="citation"></a>📝 How to Cite?
 
-## Citing
+Paper has been submitted to a conference. In the meantime, for the repository, utilise the button top right corner of the
+repository "How to cite?", or open the following citation file: [CITATION.cff](./CITATION.cff).
 
-If you want to cite GAMA, please use [our ECML-PKDD 2020 Demo Track publication](https://link.springer.com/chapter/10.1007/978-3-030-67670-4_39).
+## <a id="license"></a>🔐 License
 
-```latex
-@InProceedings{10.1007/978-3-030-67670-4_39,
-author="Gijsbers, Pieter and Vanschoren, Joaquin",
-editor="Dong, Yuxiao
-and Ifrim, Georgiana
-and Mladeni{\'{c}}, Dunja
-and Saunders, Craig
-and Van Hoecke, Sofie",
-title="GAMA: A General Automated Machine Learning Assistant",
-booktitle="Machine Learning and Knowledge Discovery in Databases. Applied Data Science and Demo Track",
-year="2021",
-publisher="Springer International Publishing",
-address="Cham",
-pages="560--564",
-abstract="The General Automated Machine learning Assistant (GAMA) is a modular AutoML system developed to empower users to track and control how AutoML algorithms search for optimal machine learning pipelines, and facilitate AutoML research itself. In contrast to current, often black-box systems, GAMA allows users to plug in different AutoML and post-processing techniques, logs and visualizes the search process, and supports easy benchmarking. It currently features three AutoML search algorithms, two model post-processing steps, and is designed to allow for more components to be added.",
-isbn="978-3-030-67670-4"
-}
-```
-
-## License
-The contents of this repository is under an [Apache-2.0 License](https://github.com/openml-labs/gama/blob/master/LICENSE).
+[MIT License](./LICENSE)

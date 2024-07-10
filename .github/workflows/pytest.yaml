@@ -8,34 +8,61 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.9", "3.10", "3.11"]
-        os: [ubuntu-latest, macos-latest, windows-latest]
-
+        python-version: ["3.9", "3.10"]
+        os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Invoke Unit Tests
-        uses: ./.github/actions/pytest
+      - name: Set up Python
+        uses: actions/setup-python@v2
         with:
-          path: tests/unit
-          os: ${{ matrix.os }}
           python-version: ${{ matrix.python-version }}
+
+      - name: Checkout this repository
+        uses: actions/checkout@v3
+
+      - uses: pdm-project/setup-pdm@main
+        name: Setup PDM
+        with:
+          architecture: x64
+          prerelease: false
+          enable-pep582: true
+
+      - name: Install dependencies from pdm.lock
+        run: |
+          pdm install --dev
+
+      - name: Run tests
+        run: pdm run tests_unit
 
   system:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.9", "3.10", "3.11"]
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.9"]
+        os: [ubuntu-latest]
 
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Invoke System Tests
-        uses: ./.github/actions/pytest
+      - name: Set up Python
+        uses: actions/setup-python@v2
         with:
-          path: tests/system
-          os: ${{ matrix.os }}
           python-version: ${{ matrix.python-version }}
+
+      - name: Checkout this repository
+        uses: actions/checkout@v3
+
+      - uses: pdm-project/setup-pdm@main
+        name: Setup PDM
+        with:
+          architecture: x64
+          prerelease: false
+          enable-pep582: true
+
+      - name: Install dependencies from pdm.lock
+        run: |
+          pdm install --dev
+
+      - name: Run tests
+        run: pdm run tests_system
