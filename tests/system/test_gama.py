@@ -12,6 +12,8 @@ def _gama_on_digits(gama):
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, stratify=y, random_state=0
     )
+    y_train = y_train.to_numpy()
+    y_test = y_test.to_numpy()
 
     # Add checks on individuals (reproducibility)
     gama.fit(X_train, y_train)

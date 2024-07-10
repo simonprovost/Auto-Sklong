@@ -36,6 +36,7 @@ class PreprocessorConfig:
             raise ValueError("Expected 'preprocessors' key in meta of config_space")
         self.config_space = config_space
         self.preprocessors_setup_map = {
+            "Dummy_To_Ignore": self.setup_dummy_to_ignore,
             "Binarizer": self.setup_binarizer,
             "FastICA": self.setup_fast_ica,
             "FeatureAgglomeration": self.setup_feature_agglomeration,
@@ -71,6 +72,7 @@ class PreprocessorConfig:
         preprocessors = csh.CategoricalHyperparameter(
             name=self.cs_preprocessors_name,
             choices=preprocessors_choices,
+            default_value=preprocessors_choices[0],
         )
         self.config_space.add_hyperparameter(preprocessors)
 
@@ -106,6 +108,10 @@ class PreprocessorConfig:
         self.config_space.add_hyperparameters(hyperparameters_to_add)
         self.config_space.add_conditions(conditions_to_add)
 
+    def setup_dummy_to_ignore(self, classifiers: csh.CategoricalHyperparameter):
+        # No hyperparameters
+        pass
+
     def setup_binarizer(self, preprocessors: csh.CategoricalHyperparameter):
         threshold = csh.UniformFloatHyperparameter(
             "threshold__Binarizer",
@@ -133,8 +139,8 @@ class PreprocessorConfig:
             "linkage__FeatureAgglomeration",
             choices=["ward", "complete", "average"],
         )
-        affinity = csh.CategoricalHyperparameter(
-            "affinity__FeatureAgglomeration",
+        metric = csh.CategoricalHyperparameter(
+            "metric__FeatureAgglomeration",
             choices=["euclidean", "l1", "l2", "manhattan", "cosine"],
         )
 

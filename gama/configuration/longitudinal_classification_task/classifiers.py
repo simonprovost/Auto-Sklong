@@ -40,6 +40,7 @@ class LongitudinalClassifierConfig:
             )
         self.config_space = config_space
         self.classifiers_setup_map = {
+            "Dummy_To_Ignore": self.setup_dummy_to_ignore,
             # Longitudinal Algorithms
             "NestedTreesClassifier": self.setup_nested_trees,
             "LexicoRandomForestClassifier": self.setup_lexico_rf_classifier,
@@ -131,6 +132,7 @@ class LongitudinalClassifierConfig:
         classifiers = csh.CategoricalHyperparameter(
             name=self.cs_estimators_name,
             choices=classifiers_choices,
+            default_value=classifiers_choices[0],
         )
         self.config_space.add_hyperparameter(classifiers)
 
@@ -193,6 +195,10 @@ class LongitudinalClassifierConfig:
 
         self.config_space.add_hyperparameters(hyperparameters_to_add)
         self.config_space.add_conditions(conditions_to_add)
+
+    def setup_dummy_to_ignore(self, classifiers: csh.CategoricalHyperparameter):
+        # No hyperparameters
+        pass
 
     def setup_nested_trees(self, classifiers: csh.CategoricalHyperparameter):
         max_outer_depth = csh.UniformIntegerHyperparameter(
@@ -384,7 +390,16 @@ class LongitudinalClassifierConfig:
             cs.ForbiddenEqualsClause(self.config_space["penalty__LinearSVC"], "l1"),
             cs.ForbiddenEqualsClause(self.config_space["loss__LinearSVC"], "hinge"),
         )
-        self.config_space.add_forbidden_clause(forbidden_penalty_loss)
+        # Forbidden clause: Penalty 'l2' cannot be used
+        # with loss 'hinge' and dual 'False'
+        forbidden_penalty_loss_dual_false = cs.ForbiddenAndConjunction(
+            cs.ForbiddenEqualsClause(self.config_space["penalty__LinearSVC"], "l2"),
+            cs.ForbiddenEqualsClause(self.config_space["loss__LinearSVC"], "hinge"),
+            cs.ForbiddenEqualsClause(self.config_space["dual__LinearSVC"], False),
+        )
+        self.config_space.add_forbidden_clauses(
+            [forbidden_penalty_loss, forbidden_penalty_loss_dual_false]
+        )
 
     def setup_deep_forest(self, classifiers: csh.CategoricalHyperparameter):
         n_estimators = csh.UniformIntegerHyperparameter(

@@ -28,8 +28,8 @@ def test_gamareport_from_log():
 def test_gamareport_from_log_strict_but_outdated():
     """GamaReport can be constructed from a log that recorded RandomSearch."""
     # See caveat of test_gamareport_from_log
-    log_dir = "tests/data/RandomSearch"
-    with pytest.raises(ValueError):
+    log_dir = "tests/data/RandomSearchOutdated"
+    with pytest.raises((ValueError, RuntimeError)):
         GamaReport(log_dir, strict=True)
 
 

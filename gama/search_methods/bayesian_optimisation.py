@@ -20,6 +20,7 @@ from gama.utilities.smac import (
     validate_future_valid,
     config_to_individual,
 )
+import ConfigSpace as cs
 
 log = logging.getLogger(__name__)
 
@@ -104,7 +105,7 @@ def bayesian_optimisation(
         def smac_ask_and_submit() -> TrialInfo:
             """Ask SMAC for a configuration to turn into an individual for evaluation."""
 
-            def ask() -> TrialInfo:
+            def _ask() -> TrialInfo:
                 """Ask SMAC for a configuration"""
                 if (
                     smac is None
@@ -117,7 +118,33 @@ def bayesian_optimisation(
                     )
                 return info_cand
 
-            candidate = ask()
+            def ask_and_ignore_dummy_techniques(
+                technique_name_to_ignore: str = "Dummy_To_Ignore",
+            ) -> cs.Configuration:
+                """ConfigSpace do not allow adding forbidden clauses on the default choice of a hyperparameter.
+
+                Dummy_To_Ignore becomes default and is ignored / found an alternative when picked by sample_configuration.
+                Nonetheless, for better maintainability, "Dummy_To_Ignore" can be changed, for example in the future it could be
+                in the meta of the config so that it can be changed in one place by the user, i.e in /configuratins.
+                """
+                new_candidate = _ask()
+                config = new_candidate.config
+
+                is_preprocessor_or_estimator_to_ignore = (
+                    technique_name_to_ignore in config.values()
+                )
+                while is_preprocessor_or_estimator_to_ignore:
+                    temp_candidate = _ask()
+                    temp_config = temp_candidate.config
+
+                    is_preprocessor_or_estimator_to_ignore = (
+                        technique_name_to_ignore in temp_config.values()
+                    )
+                    if not is_preprocessor_or_estimator_to_ignore:
+                        return temp_candidate
+                return new_candidate
+
+            candidate = ask_and_ignore_dummy_techniques()
             attempts = 0
             while True:
                 if not (
@@ -142,7 +169,7 @@ def bayesian_optimisation(
                         "Maximum attempts reached while trying to generate a"
                         "unique individual."
                     )
-                candidate = ask()
+                candidate = ask_and_ignore_dummy_techniques()
 
             return candidate
 
@@ -170,9 +197,11 @@ def bayesian_optimisation(
             trial_value = TrialValue(
                 cost=cost,
                 time=individual.fitness.wallclock_time,
-                status=StatusType.CRASHED
-                if hasattr(individual.fitness, "error")
-                else StatusType.SUCCESS,
+                status=(
+                    StatusType.CRASHED
+                    if hasattr(individual.fitness, "error")
+                    else StatusType.SUCCESS
+                ),
                 starttime=start_time,
                 endtime=start_time + individual.fitness.process_time,
             )

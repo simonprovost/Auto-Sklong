@@ -16,6 +16,68 @@ from gama.utilities.config_space import (
 )
 
 
+def _sample_and_ignore_dummy_techniques(
+    config_space: cs.ConfigurationSpace,
+    config: cs.Configuration,
+    technique_name_to_ignore: str = "Dummy_To_Ignore",
+) -> cs.Configuration:
+    """ConfigSpace do not allow adding forbidden
+    clauses on the default choice of a hyperparameter.
+
+    Dummy_To_Ignore becomes default and is ignored / found
+    an alternative when picked by sample_configuration.
+    Nonetheless, for better maintainability, "Dummy_To_Ignore" can be changed,
+    for example in the future it could be in the meta of the config so that
+    it can be changed in one place by the user, i.e in /configuratins.
+    """
+    is_data_preparation_to_ignore = (
+        "data_preparation" in config_space.meta
+        and config[config_space.meta["data_preparation"]] == technique_name_to_ignore
+    )
+    is_preprocessor_to_ignore = (
+        "preprocessors" in config_space.meta
+        and config[config_space.meta["preprocessors"]] == technique_name_to_ignore
+    )
+    is_estimator_to_ignore = (
+        "estimators" in config_space.meta
+        and config[config_space.meta["estimators"]] == technique_name_to_ignore
+    )
+
+    if (
+        is_data_preparation_to_ignore
+        or is_estimator_to_ignore
+        or is_preprocessor_to_ignore
+    ):
+        while (
+            is_data_preparation_to_ignore
+            or is_estimator_to_ignore
+            or is_preprocessor_to_ignore
+        ):
+            temp_config = config_space.sample_configuration()
+            is_data_preparation_to_ignore = (
+                "data_preparation" in config_space.meta
+                and temp_config[config_space.meta["data_preparation"]]
+                == technique_name_to_ignore
+            )
+            is_preprocessor_to_ignore = (
+                "preprocessors" in config_space.meta
+                and temp_config[config_space.meta["preprocessors"]]
+                == technique_name_to_ignore
+            )
+            is_estimator_to_ignore = (
+                "estimators" in config_space.meta
+                and temp_config[config_space.meta["estimators"]]
+                == technique_name_to_ignore
+            )
+            if (
+                not is_data_preparation_to_ignore
+                and not is_estimator_to_ignore
+                and not is_preprocessor_to_ignore
+            ):
+                return temp_config
+    return config
+
+
 def random_longitudinal_primitive_node(
     output_type: str,
     config_space: cs.ConfigurationSpace,
@@ -69,12 +131,19 @@ def random_longitudinal_primitive_node(
                 )
             )
 
-        config = temp_config_space.sample_configuration()
+        config = _sample_and_ignore_dummy_techniques(
+            temp_config_space, temp_config_space.sample_configuration()
+        )
         if exclude_options_path and excludes:
             while config[config_space.meta[output_type]] in excludes:
-                config = temp_config_space.sample_configuration()
+                config = _sample_and_ignore_dummy_techniques(
+                    temp_config_space, temp_config_space.sample_configuration()
+                )
+
     else:
-        config = config_space.sample_configuration()
+        config = _sample_and_ignore_dummy_techniques(
+            config_space, config_space.sample_configuration()
+        )
 
     (
         data_preparation_primitive,
@@ -147,8 +216,11 @@ def create_longitudinal_random_expression(
     and one estimator.
     """
     individual_length = random.randint(min_length, max_length)
+    config = _sample_and_ignore_dummy_techniques(
+        config_space, config_space.sample_configuration()
+    )
     return _config_to_longitudinal_primitive_node(
-        config=config_space.sample_configuration(),
+        config=config,
         config_meta=config_space.meta,
         conditions=config_space.get_conditions(),
         config_length=individual_length,

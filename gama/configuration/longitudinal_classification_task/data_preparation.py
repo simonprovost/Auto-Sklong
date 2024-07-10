@@ -27,6 +27,7 @@ class LongitudinalDataPreparationConfig:
             )
         self.config_space = config_space
         self.data_preparation_setup_map = {
+            "Dummy_To_Ignore": self.setup_dummy_to_ignore,
             "MerWavTimePlus": self.setup_merwav_time_plus,
             "MerWavTimeMinus": self.setup_merwav_time_minus,
             "AggrFuncMean": self.setup_aggr_func_mean,
@@ -49,9 +50,11 @@ class LongitudinalDataPreparationConfig:
             raise ValueError("No data preparation to add to config space")
 
         weights = [
-            0.5
-            if choice == "MerWavTimePlus"
-            else 0.5 / (len(data_preparation_choices) - 1)
+            (
+                0.5
+                if choice == "MerWavTimePlus"
+                else 0.5 / (len(data_preparation_choices) - 1)
+            )
             for choice in data_preparation_choices
         ]
 
@@ -59,6 +62,7 @@ class LongitudinalDataPreparationConfig:
             name=self.cs_data_preparation_name,
             choices=data_preparation_choices,
             weights=weights,
+            default_value=data_preparation_choices[0],
         )
 
         self.config_space.add_hyperparameter(data_preparation)
@@ -66,6 +70,10 @@ class LongitudinalDataPreparationConfig:
         for data_preparation_name in data_preparation_choices:
             if setup_func := self.data_preparation_setup_map.get(data_preparation_name):
                 setup_func(data_preparation)
+
+    def setup_dummy_to_ignore(self, classifiers: csh.CategoricalHyperparameter):
+        # No hyperparameters
+        pass
 
     def setup_merwav_time_plus(self, data_preparation: csh.CategoricalHyperparameter):
         pass
