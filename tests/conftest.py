@@ -78,7 +78,7 @@ def ForestPipeline(config_space):
     individual_str = """RandomForestClassifier(
             FeatureAgglomeration(
                     data,
-                    FeatureAgglomeration.affinity='l2',
+                    FeatureAgglomeration.metric='l2',
                     FeatureAgglomeration.linkage='complete'
                     ),
             RandomForestClassifier.bootstrap=True,

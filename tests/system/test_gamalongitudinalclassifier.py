@@ -1,4 +1,5 @@
 """ Contains full system tests for GamaClassifier """
+
 import warnings
 
 import ConfigSpace as cs
@@ -76,8 +77,9 @@ def _get_data(name: str, reduce_data_fraction: float, random_state: int):
 
     longitudinal_data = LongitudinalDataset(data_file)
     longitudinal_data.load_data_target_train_test_split(
-        target_column, remove_target_waves=True, random_state=42
+        target_column, remove_target_waves=False, random_state=42
     )
+    longitudinal_data.setup_features_group(input_data="elsa")
     return longitudinal_data
 
 
@@ -100,6 +102,9 @@ def _test_dataset_problem(
     y_test = longitudinal_data.y_test
 
     test_size = X_test.shape[0]
+
+    y_train = y_train.to_numpy()
+    y_test = y_test.to_numpy()
 
     gama = GamaLongitudinalClassifier(
         features_group=features_group,

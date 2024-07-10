@@ -1,4 +1,5 @@
 """ Contains full system tests for GamaClassifier """
+
 import warnings
 from typing import Type
 
