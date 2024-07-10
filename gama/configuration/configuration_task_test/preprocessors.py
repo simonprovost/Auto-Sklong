@@ -11,6 +11,7 @@ class PreprocessorConfigTest:
             raise ValueError("Expected 'preprocessors' key in meta of config_space")
         self.config_space = config_space
         self.preprocessors_setup_map = {
+            "Dummy_To_Ignore": self.setup_dummy_to_ignore,
             "SelectFwe": self.setup_select_fwe,
             "Binarizer": self.setup_binarizer,
             "FastICA": self.setup_fast_ica,
@@ -44,6 +45,7 @@ class PreprocessorConfigTest:
         preprocessors = csh.CategoricalHyperparameter(
             name=self.cs_preprocessors_name,
             choices=preprocessors_choices,
+            default_value=preprocessors_choices[0],
         )
         self.config_space.add_hyperparameter(preprocessors)
 
@@ -79,6 +81,10 @@ class PreprocessorConfigTest:
         self.config_space.add_hyperparameters(hyperparameters_to_add)
         self.config_space.add_conditions(conditions_to_add)
 
+    def setup_dummy_to_ignore(self, classifiers: csh.CategoricalHyperparameter):
+        # No hyperparameters
+        pass
+
     def setup_select_fwe(self, preprocessors: csh.CategoricalHyperparameter):
         alpha = csh.UniformFloatHyperparameter(
             "alpha__SelectFwe", 0, 0.05, default_value=0.05
@@ -102,22 +108,22 @@ class PreprocessorConfigTest:
         linkage = csh.CategoricalHyperparameter(
             "linkage__FeatureAgglomeration", ["ward", "complete", "average"]
         )
-        affinity = csh.CategoricalHyperparameter(
-            "affinity__FeatureAgglomeration",
+        metric = csh.CategoricalHyperparameter(
+            "metric__FeatureAgglomeration",
             ["euclidean", "l1", "l2", "manhattan", "cosine", "precomputed"],
         )
         self._add_hyperparameters_and_equals_conditions(
             locals(), "FeatureAgglomeration"
         )
 
-        # Forbidden clause: Linkage is different from 'ward' and affinity is 'euclidean'
+        # Forbidden clause: Linkage is different from 'ward' and metric is 'euclidean'
         forbidden_penalty_loss = cs.ForbiddenAndConjunction(
             cs.ForbiddenInClause(
                 self.config_space["linkage__FeatureAgglomeration"],
                 ["complete", "average"],
             ),
             cs.ForbiddenEqualsClause(
-                self.config_space["affinity__FeatureAgglomeration"], "euclidean"
+                self.config_space["metric__FeatureAgglomeration"], "euclidean"
             ),
         )
         self.config_space.add_forbidden_clause(forbidden_penalty_loss)

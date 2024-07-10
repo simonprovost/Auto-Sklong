@@ -35,6 +35,7 @@ class RegressorConfig:
             raise ValueError("Expected 'estimators' key in meta of config_space")
         self.config_space = config_space
         self.regressors_setup_map = {
+            "Dummy_To_Ignore": self.setup_dummy_to_ignore,
             "ElasticNetCV": self.setup_elastic_net_cv,
             "ExtraTreesRegressor": self.setup_extra_trees_regressor,
             "GradientBoostingRegressor": self.setup_gradient_boosting_regressor,
@@ -78,6 +79,7 @@ class RegressorConfig:
         regressors = csh.CategoricalHyperparameter(
             name=self.cs_estimators_name,
             choices=regressors_choices,
+            default_value=regressors_choices[0],
         )
         self.config_space.add_hyperparameter(regressors)
 
@@ -110,6 +112,10 @@ class RegressorConfig:
 
         self.config_space.add_hyperparameters(hyperparameters_to_add)
         self.config_space.add_conditions(conditions_to_add)
+
+    def setup_dummy_to_ignore(self, classifiers: csh.CategoricalHyperparameter):
+        # No hyperparameters
+        pass
 
     def setup_elastic_net_cv(self, regressors: csh.CategoricalHyperparameter):
         l1_ratio = csh.UniformFloatHyperparameter(
@@ -233,10 +239,6 @@ class RegressorConfig:
         self._add_hyperparameters_and_equals_conditions(locals(), "KNeighborsRegressor")
 
     def setup_lasso_lars_cv(self, regressors: csh.CategoricalHyperparameter):
-        normalize = csh.CategoricalHyperparameter(
-            "normalize__LassoLarsCV", [True, False]
-        )
-
         self._add_hyperparameters_and_equals_conditions(locals(), "LassoLarsCV")
 
     def setup_linear_svr(self, regressors: csh.CategoricalHyperparameter):

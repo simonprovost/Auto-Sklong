@@ -104,6 +104,8 @@ class GamaClassifier(Gama):
             for classifier in search_space.get_hyperparameter(
                 search_space.meta["estimators"]
             ).choices:
+                if classifier == "Dummy_To_Ignore":
+                    continue
                 estimator = get_estimator_by_name(classifier)
                 if (
                     estimator is not None
