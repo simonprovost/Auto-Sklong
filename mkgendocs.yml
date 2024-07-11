@@ -1,0 +1,49 @@
+sources_dir: docs/scripts_to_markdown
+repo: https://github.com/simonprovost/auto-sklong
+version: main
+
+pages:
+  - page: "Gama.md"
+    source: "gama/Gama.py"
+    classes:
+      - Gama
+  - page: "Gama_Longitudinal_Classifier.md"
+    source: "gama/GamaLongitudinalClassifier.py"
+    classes:
+      - GamaLongitudinalClassifier
+  - page: "configuration/data_preparation.md"
+    source: "gama/configuration/longitudinal_classification_task/data_preparation.py"
+    classes:
+      - LongitudinalDataPreparationConfig
+  - page: "configuration/classifiers.md"
+    source: "gama/configuration/longitudinal_classification_task/classifiers.py"
+    classes:
+      - LongitudinalClassifierConfig
+  - page: "configuration/preprocessors.md"
+    source: "gama/configuration/longitudinal_classification_task/preprocessors.py"
+    classes:
+      - LongitudinalPreprocessorConfig
+  - page: "search_methods/evolutionary_algorithm.md"
+    source: "gama/search_methods/async_ea.py"
+    classes:
+      - AsyncEA
+    functions:
+      - async_ea
+  - page: "search_methods/random_search.md"
+    source: "gama/search_methods/random_search.py"
+    classes:
+      - RandomSearch
+    functions:
+      - random_search
+  - page: "search_methods/asha.md"
+    source: "gama/search_methods/asha.py"
+    classes:
+      - AsynchronousSuccessiveHalving
+    functions:
+      - asha
+  - page: "search_methods/bayesian_optimisation.md"
+    source: "gama/search_methods/bayesian_optimisation.py"
+    classes:
+      - BayesianOptimisation
+    functions:
+      - bayesian_optimisation

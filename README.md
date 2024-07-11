@@ -87,6 +87,7 @@
    </table>
 </div>
 
+
 > 🌟 **Exciting Update**: We're delighted to introduce the brand new v0.1 documentation for `Auto-Sklong`! For a
 > deep dive into the library's capabilities and features,
 > please [visit here](https://simonprovost.github.io/auto-sklong/).
@@ -176,14 +177,14 @@ dataset.load_data_target_train_test_split(
 )
 
 # Pre-set or manually set your temporal dependencies 
-dataset.setup_features_group(input_data="Elsa")
+dataset.setup_features_group(input_data="elsa")
 
 # Instantiate the AutoML system
 automl = GamaLongitudinalClassifier(
-        features_group=features_group,
-        non_longitudinal_features=non_longitudinal_features,
-        feature_list_names=feature_list_names,
-    )
+    features_group=dataset.features_group(),
+    non_longitudinal_features=dataset.non_longitudinal_features(),
+    feature_list_names=dataset.data.columns,
+)
 
 # Run the AutoML system to find the best model and hyperparameters
 model.fit(dataset.X_train, dataset.y_train)
