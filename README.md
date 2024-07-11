@@ -90,13 +90,13 @@
 
 > 🌟 **Exciting Update**: We're delighted to introduce the brand new v0.1 documentation for `Auto-Sklong`! For a
 > deep dive into the library's capabilities and features,
-> please [visit here](https://simonprovost.github.io/auto-sklong/).
+> please [visit here](https://simonprovost.github.io/Auto-Sklong/).
 
 > 🎉 **PyPi is available!**: We published `Auto-Sklong`, [here](https://pypi.org/project/Auto-Sklong/)!
 
 ## <a id="about-the-project"></a>💡 About The Project
 
-`Auto-Scikit-Longitudinal` (Auto-Sklong) is an automated machine learning (AutoML) library designed to analyse
+`Auto-Scikit-Longitudinal`, also called `Auto-Sklong` is an automated machine learning (AutoML) library designed to analyse
 longitudinal data (Classification tasks focussed as of today) using various search methods. Namely,
 `Bayesian Optimisation` via [SMAC3](https://github.com/automl/SMAC3), `Asynchronous Successive Halving`, 
 `Evolutionary Algorithms`, and `Random Search` 
