@@ -1,0 +1,140 @@
+repo_url: https://github.com/simonprovost/auto-sklong
+edit_uri: blob/main/docs/
+
+site_name: Auto-Sklong
+site_author: Simon Provost
+copyright: © Simon Provost 2024-present
+site_description: >
+  Auto-Scikit-Longitudinal (Auto-Sklong) is an automated machine learning (AutoML)
+  library designed to analyse longitudinal data (Classification tasks focussed as of today)
+  using various search methods. Namely, Bayesian Optimisation via SMAC3, Asynchronous 
+  Successive Halving, Evolutionary Algorithms, and Random Search via GAMA
+
+remote_branch: main
+
+theme:
+  name: 'material'
+  custom_dir: 'docs/theme'
+  favicon: 'assets/images/favicon.ico'
+  logo: 'assets/images/AutoSklongLogo.png'
+  icon:
+    repo: fontawesome/brands/github
+  language: en
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: scikit_light
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+
+  font:
+    text: Roboto
+    code: Roboto Mono
+  features:
+    - announce.dismiss
+    - content.tabs.link
+    - content.code.copy
+    - content.code.select
+    - content.code.annotate
+    - navigation.tabs
+    - navigation.top
+    - search.suggest
+    - toc.follow
+    - toc.integrate
+
+
+extra_css:
+  - 'stylesheets/extra.css'
+  - 'stylesheets/landing.css'
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+
+plugins:
+  - privacy
+  - social
+  - search
+  - minify
+
+extra:
+  social:
+      - icon: fontawesome/brands/github-alt
+        link: https://github.com/simonprovost/
+      - icon: fontawesome/brands/linkedin
+        link: https://www.linkedin.com/in/simonprovostdev/
+      - icon: fontawesome/brands/google-scholar
+        link: https://scholar.google.com/citations?user=Lv_LddYAAAAJ
+      - icon: fontawesome/brands/orcid
+        link: https://orcid.org/0000-0001-8402-5464
+      - icon: fontawesome/brands/researchgate
+        link: https://www.researchgate.net/profile/Provost-Simon
+      - icon: fontawesome/brands/stack-overflow
+        link: https://stackoverflow.com/users/9814037/simon-provost
+      - icon: fontawesome/solid/building-columns
+        link: https://www.kent.ac.uk/computing/people/4973/provost-simon
+
+markdown_extensions:
+  - markdown.extensions.admonition
+  - markdown.extensions.codehilite:
+      guess_lang: false
+  - def_list
+  - markdown.extensions.footnotes
+  - markdown.extensions.meta
+  - markdown.extensions.toc:
+      permalink: true
+  - pymdownx.arithmatex
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.keys
+  - pymdownx.magiclink
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+  - attr_list
+  - md_in_html
+  - pymdownx.arithmatex:
+        generic: true
+
+nav:
+  - "Home": index.md
+  - "Quick Start": quick-start.md
+  - "Temporal Dependency (Sklong doc)": https://simonprovost.github.io/scikit-longitudinal/temporal_dependency/
+  - "Search Space": search_space.md
+  - "API Reference":
+    - "Overview": API/index.md
+    - "AutoML Classes":
+        - "Gama (Base) (redirect to GAMA)": https://openml-labs.github.io/gama/master/api/index.html#gama
+        - "Gama Longitudinal Classifier": API/Gama_Longitudinal_Classifier.md
+    - "Search Methods":
+        - "Bayesian optimisation (BO)": "API/search_methods/bayesian_optimisation.md"
+        - "Asynchronous Evolutionary Algorithm (Async EA) (redirect to GAMA)": https://openml-labs.github.io/gama/master/api/index.html#asyncea
+        - "Asynchronous Successive Halving (ASHA) (redirect to GAMA)": https://openml-labs.github.io/gama/master/api/index.html#asynchronoussuccessivehalving
+        - "Random Search (redirect to GAMA)": https://openml-labs.github.io/gama/master/api/index.html#randomsearch
+  - "Examples": examples/index.md
+  - "Contributing": contribution.md
+  - "Release History": https://github.com/simonprovost/auto-sklong/releases
+  - "FAQ": faq.md
