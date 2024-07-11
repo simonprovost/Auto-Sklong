@@ -3,17 +3,17 @@ requires = ["pdm-backend"]
 build-backend = "pdm.backend"
 
 [project]
-name = "autosklong"
+name = "Auto-Sklong"
 description = "A package for automated machine learning based on scikit-learn and sklong to tackle the longitudinal machine learning classificationt tasks."
 readme = "README.md"
 authors = [
     { name = "Pieter Gijsbers", email = "p.gijsbers@tue.nl" },
     { name = "Provost Simon", email = "s.g.provost@kent.ac.uk" },
 ]
-license = { text = "Apache-2.0" }
+license = { text = "MIT" }
 #keywords = ..
 classifiers = [
-    "License :: OSI Approved :: Apache License",
+    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
 ]
 
@@ -31,7 +31,7 @@ dependencies = [
     "smac==2.1.0",
     "Scikit-longitudinal>=0.0.5",
 ]
-version = "0.0.1"
+version = "0.0.2"
 
 [urls]
 github = "https://github.com/simonprovost/Auto-Sklong"
