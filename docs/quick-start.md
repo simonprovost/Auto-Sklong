@@ -25,12 +25,52 @@ via [`SMAC3`](https://github.com/automl/SMAC3), `Random Search`, `Successive Hal
 
 ## 🛠️ Installation
 
+1. ✅ **Install the latest version of `Auto-Sklong`**:
+
 ```shell
-   pip install Auto-Sklong
+pip install Auto-Sklong
 ```
 !!! info "Different Versions?"
     You can also install different versions of the library by specifying the version number, e.g., `pip install Auto-Sklong==0.0.1`. 
     Refer to the [Release Notes](https://github.com/simonprovost/scikit-longitudinal/releases).
+
+2. 📦 **[MANDATORY] Update the required dependencies (Why? See [here](https://github.com/pdm-project/pdm/issues/1316#issuecomment-2106457708))**
+
+`Auto-Sklong` incorporates via `Sklong` a modified version of `Scikit-Learn` called `Scikit-Lexicographical-Trees`, 
+which can be found at [this Pypi link](https://pypi.org/project/scikit-lexicographical-trees/).
+
+This revised version guarantees compatibility with the unique features of `Scikit-longitudinal`. 
+Nevertheless, conflicts may occur with other dependencies in `Auto-Sklong` that also require `Scikit-Learn`. 
+Follow these steps to prevent any issues when running your project.
+
+<details>
+<summary><strong>🫵 Simple Setup: Command Line Installation</strong></summary>
+
+Say you want to try `Auto-Sklong` in a very simple environment. Such as without a proper `project.toml` file (`Poetry`, `PDM`, etc).
+Run the following command:
+
+```shell
+pip uninstall scikit-learn scikit-lexicographical-trees && pip install scikit-lexicographical-trees
+```
+</details>
+
+<details>
+<summary><strong>🫵 Project Setup: Using `PDM` (or any other such as `Poetry`, etc.)</strong></summary>
+
+Imagine you have a project being managed by `PDM`, or any other package manager. The example below demonstrates `PDM`. 
+Nevertheless, the process is similar for `Poetry` and others. Consult their documentation for instructions on excluding a 
+package.
+
+Therefore, to prevent dependency conflicts, you can exclude `Scikit-Learn` by adding the provided configuration 
+to your `pyproject.toml` file.
+
+```toml
+[tool.pdm.resolution]
+excludes = ["scikit-learn"]
+```
+
+*This exclusion ensures Scikit-Lexicographical-Trees (used as `Scikit-learn`) is used seamlessly within your project.*
+</details>
 
 ### 💻 Developer Notes
 
