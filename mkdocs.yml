@@ -137,4 +137,5 @@ nav:
   - "Examples": examples/index.md
   - "Contributing": contribution.md
   - "Release History": https://github.com/simonprovost/auto-sklong/releases
+  - "Experiments Paper": experiments.md
   - "FAQ": faq.md
