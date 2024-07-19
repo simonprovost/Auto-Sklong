@@ -1,0 +1,52 @@
+:root {
+  --md-primary-fg-color:       #f8b024;
+  --md-primary-fg-color--light: #fcb93c;
+  --md-primary-fg-color--dark: #faab12
+}
+
+[data-md-color-scheme="scikit_light"] {
+  --md-primary-fg-color:       #f8b024;
+  --md-primary-fg-color--light: #fcb93c;
+  --md-primary-fg-color--dark: #faab12
+}
+
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #f8b024;
+  --md-primary-fg-color--light: #fcb93c;
+  --md-primary-fg-color--dark: #faab12
+}
+
+/* Remove default title on the page */
+.md-content__inner h1:first-child {
+  display: none;
+}
+
+/* Adjust to 2px to align with the title */
+.md-logo {
+  padding-top: 6px;
+}
+
+.btn {
+  border: none;
+  padding: 14px 28px;
+  cursor: pointer;
+  display: inline-block;
+
+  background: #f8b024;
+  color: white;
+}
+
+.btn:hover {
+  background: #fcb93c;
+  color: white;
+}
+
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.text-center {
+  text-align: center;
+}
