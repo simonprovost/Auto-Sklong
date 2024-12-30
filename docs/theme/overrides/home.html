@@ -158,10 +158,10 @@
   /* Warning banner styling */
   .warning-banner {
     position: fixed;
-    bottom: 70px; /* Adjust the position to be above the note banner */
+    bottom: 70px;
     left: 20px;
     background: rgba(255, 204, 0, 0.9);
-    color: #fff; /* Change text color to white */
+    color: #fff;
     text-align: left;
     padding: 10px 20px;
     font-weight: bold;
@@ -175,7 +175,7 @@
 
   .warning-banner img {
     margin-right: 10px;
-    filter: invert(1); /* Make the icon white */
+    filter: invert(1);
   }
 
   @keyframes slide-up {
@@ -194,7 +194,7 @@
   /* Note banner styling */
   .note-banner {
     position: fixed;
-    bottom: 20px; /* Adjust the position to be below the warning banner */
+    bottom: 20px;
     left: 20px;
     background: rgba(0, 123, 255, 0.9);
     color: #fff;
@@ -211,11 +211,34 @@
 
   .note-banner img {
     margin-right: 10px;
-    filter: invert(1); /* Make the icon white */
+    filter: invert(1);
   }
 
   .note-banner {
     animation: slide-up 0.5s ease-in-out;
+  }
+
+  .custom_mdx-spotlight__feature {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+
+  .custom_mdx-spotlight__feature img {
+    order: 2;
+    max-width: 40%;
+    height: auto;
+  }
+
+  .custom_mdx-spotlight__feature .custom_md-typeset {
+    order: 1;
+    max-width: 50%;
+    margin: 0 auto;
+    text-align: center;
+    font-size: 0.8rem;
   }
 
 </style>
@@ -255,7 +278,13 @@
 
 <div class="note-banner">
   <img src="https://img.icons8.com/ios-filled/50/000000/info.png" alt="Info Icon" width="24" height="24">
-  <span>Paper is incoming. Submitted to a conference.</span>
+  <span>
+    Paper accepted at
+    <a href="https://ieeebibm.org/BIBM2024/" target="_blank" style="color: #fff; text-decoration: underline;">
+      IEEE BIBM 2024
+    </a>.
+    Awaiting for proceeding to be released.
+  </span>
 </div>
 
 <div class="box">
@@ -343,7 +372,7 @@
             </p>
           </figcaption>
         </figure>
-         <figure class="mdx-spotlight__feature">
+         <figure class="custom_mdx-spotlight__feature">
          <img
             src="assets/images/spotlight/setup_code.png"
             alt="Auto-Sklong Setup Code"
@@ -351,7 +380,7 @@
             width="auto"
             height="auto"
           />
-          <figcaption class="md-typeset">
+          <figcaption class="custom_md-typeset">
             <h2>Your Longitudinal Analysis using AutoML in ~10 lines of code</h2>
             <p>
               <strong>Auto-Sklong</strong> aims to be simple to use and understand.

@@ -3,96 +3,63 @@
    <p align="center">
    <h1 align="center">
       <br>
-      <a href="https://i.imgur.com/Qu8fIfA.png"><img src="https://i.imgur.com/Qu8fIfA.png" alt="Auto-Sklong" width="200"></a>
+      <a href="https://i.imgur.com/Qu8fIfA.png">
+         <img src="https://i.imgur.com/Qu8fIfA.png" alt="Auto-Sklong" width="200">
+      </a>
       <br>
       Auto-Sklong
       <br>
    </h1>
-   <h4 align="center">A specialised Python library for Automated Machine Learning (AutoML) of Longitudinal machine learning classification tasks built upon <a href="https://github.com/openml-labs/gama">GAMA</a> </h4>
-   <table align="center">
-      <tr>
-         <td align="center">
-            <h3>⚙️ Project Status</h3>
-         </td>
-         <td align="center">
-            <h3>☎️ Contacts</h3>
-         </td>
-      </tr>
-      <tr>
-         <td valign="top">
-            <!-- Python-related badges table -->
-            <table>
-               <tr>
-                  <table>
-                     <tr>
-                        <td>
-                           <a href="https://github.com/openml-labs/gama"><img src="https://img.shields.io/badge/Fork-GAMA-green?labelColor=Purple&style=for-the-badge&link=https://github.com/openml-labs/gama" alt="Fork" /></a>
-                           <br />
-                           <a href="https://pdm.fming.dev">
-                           <img alt="pdm" src="https://img.shields.io/badge/pdm-managed-blue?style=for-the-badge&logo=python">
-                           </a>
-                        </td>
-                        <td>
-                           <a href="https://pytest.org/">
-                           <img alt="pytest" src="https://img.shields.io/badge/pytest-passing-green?style=for-the-badge&logo=pytest">
-                           </a><br />
-                           <a href="https://codecov.io/gh/Scikit-Longitudinal/Scikit-Longitudinal">
-                           <img alt="Codecov" src="https://img.shields.io/badge/coverage-76%25-brightgreen.svg?style=for-the-badge&logo=appveyor">
-                           </a>
-                        </td>
-                     </tr>
-                     <tr>
-                        <td>
-                           <a href="https://www.pylint.org/">
-                           <img alt="pylint" src="https://img.shields.io/badge/pylint-checked-blue?style=for-the-badge&logo=python">
-                           </a><br />
-                           <a href="https://pre-commit.com/">
-                           <img alt="pre-commit" src="https://img.shields.io/badge/pre--commit-checked-blue?style=for-the-badge&logo=python">
-                           </a>
-                        </td>
-                        <td>
-                           <a href="https://github.com/psf/black">
-                           <img alt="black" src="https://img.shields.io/badge/black-formatted-black?style=for-the-badge&logo=python">
-                           </a><br />
-                           <a href="https://github.com/astral-sh/ruff">
-                           <img alt="Ruff" src="https://img.shields.io/badge/Linter-Ruff-brightgreen?style=for-the-badge">
-                           </a><br />
-                        </td>
-                     </tr>
-                  </table>
-                  <td valign="center">
-                     <table>
-                        <tr>
-                           <td>
-                                <a href="mailto:s.g.provost@kent.ac.uk">
-                                    <img alt="Microsoft Outlook" src="https://upload.wikimedia.org/wikipedia/commons/d/df/Microsoft_Office_Outlook_%282018%E2%80%93present%29.svg" width="40" height="40">
-                                </a><br />
-                                <a href="https://linkedin.com/in/simonprovostdev/">
-                                    <img alt="LinkedIn" src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" width="40" height="40">
-                                </a><br />
-                                <a href="https://stackoverflow.com/users/9814037/simon-provost">
-                                    <img alt="Stack Overflow" src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Stack_Overflow_icon.svg" width="40" height="40">
-                                </a><br />
-                                <a href="https://scholar.google.com/citations?user=Lv_LddYAAAAJ">
-                                    <img alt="Google Scholar" src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Google_Scholar_logo.svg" width="40" height="40">
-                                </a>
-                            </td>
-                        </tr>
-                     </table>
-                  </td>
-               </tr>
-            </table>
-         </td>
-      </tr>
-   </table>
+   <h4 align="center">
+      A specialised Python library for Automated Machine Learning (AutoML) 
+      of Longitudinal machine learning classification tasks built upon 
+      <a href="https://github.com/openml-labs/gama">GAMA</a>
+   </h4>
 </div>
 
+<div align="center">
 
-> 🌟 **Exciting Update**: We're delighted to introduce the brand new v0.1 documentation for `Auto-Sklong`! For a
-> deep dive into the library's capabilities and features,
-> please [visit here](https://simonprovost.github.io/Auto-Sklong/).
+<!-- All badges in a row -->
+<a href="https://github.com/openml-labs/gama">
+   <img src="https://img.shields.io/badge/Fork-GAMA-green?labelColor=Purple&style=for-the-badge"
+        alt="Fork GAMA" />
+</a>
+<a href="https://pytest.org/">
+   <img alt="pytest" src="https://img.shields.io/badge/pytest-passing-green?style=for-the-badge&logo=pytest">
+</a>
+<a href="https://codecov.io/gh/Scikit-Longitudinal/Scikit-Longitudinal">
+   <img alt="Codecov" src="https://img.shields.io/badge/coverage-76%25-brightgreen.svg?style=for-the-badge&logo=appveyor">
+</a>
+<a href="https://www.pylint.org/">
+   <img alt="pylint" src="https://img.shields.io/badge/pylint-checked-blue?style=for-the-badge&logo=python">
+</a>
+<a href="https://pre-commit.com/">
+   <img alt="pre-commit" src="https://img.shields.io/badge/pre--commit-checked-blue?style=for-the-badge&logo=python">
+</a>
+<a href="https://github.com/psf/black">
+   <img alt="black" src="https://img.shields.io/badge/black-formatted-black?style=for-the-badge&logo=python">
+</a>
+<a href="https://github.com/astral-sh/ruff">
+   <img alt="Ruff" src="https://img.shields.io/badge/Linter-Ruff-brightgreen?style=for-the-badge">
+</a>
+<a href="https://github.com/astral-sh/uv">
+   <img alt="UV Managed" src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json">
+</a>
 
-> 🎉 **PyPi is available!**: We published `Auto-Sklong`, [here](https://pypi.org/project/Auto-Sklong/)!
+[simonprovostdev.vercel.app](https://simonprovostdev.vercel.app/)
+
+</div>
+
+# 📰 Latest News 
+
+- **Bye Bye PDM!**: We are now leveraging 
+  [UV](https://docs.astral.sh/uv/) from **Astral** (alongside Ruff)!
+
+- **Documentation**: For a deep dive into `Auto-Sklong`, check out our 
+  [official docs](https://simonprovost.github.io/Auto-Sklong/).
+
+- **PyPi**: The library is published on [PyPi here](https://pypi.org/project/Auto-Sklong/).
+
 
 ## <a id="about-the-project"></a>💡 About The Project
 
@@ -141,11 +108,29 @@ pip uninstall scikit-learn scikit-lexicographical-trees && pip install scikit-le
 </details>
 
 <details>
-<summary><strong>🫵 Project Setup: Using `PDM` (or any other such as `Poetry`, etc.)</strong></summary>
+<summary><strong>🫵 Project Setup: Using `UV`</strong></summary>
+
+Imagine you are managing your project with **UV**, a powerful and flexible project management tool. Below is an example configuration for integrating **UV** in your `pyproject.toml` file.
+
+To ensure smooth operation and avoid dependency conflicts, you can override specific dependencies like `Scikit-Learn`. Add the following configuration to your `pyproject.toml`:
+
+```toml
+[tool.uv]
+package = true
+override-dependencies = [
+    "scikit-learn ; sys_platform == 'never'",
+]
+```
+
+This setup ensures that UV will manage your project’s dependencies efficiently, while avoiding conflicts with Scikit-Learn.
+
+</details>
+
+<details>
+<summary><strong>🫵 Project Setup: Using `PDM`</strong></summary>
 
 Imagine you have a project being managed by `PDM`, or any other package manager. The example below demonstrates `PDM`. 
-Nevertheless, the process is similar for `Poetry` and others. Consult their documentation for instructions on excluding a 
-package.
+Nevertheless, the process is similar for `Poetry`.
 
 Therefore, to prevent dependency conflicts, you can exclude `Scikit-Learn` by adding the provided configuration 
 to your `pyproject.toml` file.
@@ -158,27 +143,22 @@ excludes = ["scikit-learn"]
 *This exclusion ensures Scikit-Lexicographical-Trees (used as `Scikit-learn`) is used seamlessly within your project.*
 </details>
 
-### 🚀 **What's new compared to GAMA?**
+### 🚀 **What's New Compared to GAMA?**
 
-We improved [@PGijsbers'](https://github.com/PGijsbers) open-source `GAMA` initiative to propose a new search space that 
-leverages our other newly-designed library
-[`Scikit-Longitudinal` (Sklong)](https://github.com/simonprovost/scikit-longitudinal) in order to tackle the longitudinal
-classification problems via Combined Algorithm Selection and Hyperparameter Optimization (CASH Optimization).
+We enhanced [@PGijsbers'](https://github.com/PGijsbers) open-source `GAMA` initiative by introducing a brand-new search space designed specifically for tackling longitudinal classification problems. This search space is powered by our custom library, [`Scikit-Longitudinal` (Sklong)](https://github.com/simonprovost/scikit-longitudinal), enabling Combined Algorithm Selection and Hyperparameter Optimization (CASH Optimization).
 
-Worth noting that it previously was not possible with `GAMA` or any other AutoML libraries to the best of our knowledge
-_(refer to the Related Projects in the
-[official documentation](https://simonprovost.github.io/scikit-longitudinal/) nonetheless)._
+Unlike `GAMA` or other existing AutoML libraries, `Auto-Sklong` offers out-of-the-box support for 
+longitudinal classification tasks—a capability not previously available. 
 
-While `GAMA` is offering a way to update the search space, we had to improve `GAMA` to support a couple of new features as follow.
-Nonetheless, it is worth-noting that in the coming months, the current version of `Auto-Sklong` might speedy increase due 
-to the following pull requests ongoing on `GAMA`:
+#### Search Space Viz.:
+To better understand our proposed search space, refer to the visualisation below (read from left to right, each step being one new component to a final pipeline candidate configuration):
 
-- [ ] [ConfigSpace Technology Integration for Enhanced GAMA Configuration and Management 🥇](https://github.com/openml-labs/gama/pull/210)
-- [ ] [Search Methods Enhancements to Avoid Duplicate Evaluated Pipelines 🥈 #211](https://github.com/openml-labs/gama/pull/211)
-- [ ] [SMAC3 Bayesian Optimisation Integration [🆕 Search Method] 🥉 #212](https://github.com/openml-labs/gama/pull/212)
+[![Search Space Visualization](https://i.imgur.com/advUOnU.png)](https://i.imgur.com/advUOnU.png)
 
-As soon as we are able to publish those on `GAMA`, there will be a compatibility refactoring to align 
-`Auto-Sklong` with the most recent version of `GAMA`. As a result, this section will be removed appropriately.
+While `GAMA` offers some configurability for search spaces, we improved its functionality to better suit our needs. You can find the details of our contributions in the following pull requests:
+- [ConfigSpace Technology Integration for Enhanced GAMA Configuration and Management 🥇](https://github.com/openml-labs/gama/pull/210)
+- [Search Methods Enhancements to Avoid Duplicate Evaluated Pipelines 🥈](https://github.com/openml-labs/gama/pull/211)
+- [SMAC3 Bayesian Optimisation Integration 🆕](https://github.com/openml-labs/gama/pull/212)
 
 ### 💻 Developer Notes
 
@@ -189,7 +169,7 @@ and `Scikit-Longitudinal` [here](https://simonprovost.github.io/scikit-longitudi
 
 `Auto-Sklong` is compatible with the following operating systems:
 
-- MacOS  
+- MacOS  _(Careful, you may need to force your settings to be under intel x86_64 and not apple silicon if you hold an M-based chip)_
 - Linux 🐧
 - On Windows 🪟, you are recommended to run the library within a Docker container under a Linux distribution.
 
@@ -225,7 +205,7 @@ dataset.setup_features_group(input_data="elsa")
 automl = GamaLongitudinalClassifier(
     features_group=dataset.features_group(),
     non_longitudinal_features=dataset.non_longitudinal_features(),
-    feature_list_names=dataset.data.columns,
+    feature_list_names=dataset.data.columns.tolist(),
 )
 
 # Run the AutoML system to find the best model and hyperparameters
@@ -244,7 +224,8 @@ automl.export_script()
 
 ## <a id="citation"></a>📝 How to Cite?
 
-Paper has been submitted to a conference. In the meantime, for the repository, utilise the button top right corner of the
+`Auto-Sklong` paper has been accepted to the International Conference on Bioinformatics and Biomedicine (BIBM) 2024 edition. Awaiting for the proceeding to be released.
+In the meantime, for the repository, utilise the button top right corner of the
 repository "How to cite?", or open the following citation file: [CITATION.cff](./CITATION.cff).
 
 ## <a id="license"></a>🔐 License
