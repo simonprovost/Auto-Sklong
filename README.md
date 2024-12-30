@@ -58,7 +58,7 @@
 - **Documentation**: For a deep dive into `Auto-Sklong`, check out our 
   [official docs](https://simonprovost.github.io/Auto-Sklong/).
 
-- **PyPi**: The library is published on [PyPi here](https://pypi.org/project/Auto-Sklong/).
+- **PyPi**: The library's latest version is published on [PyPi here](https://pypi.org/project/Auto-Sklong/).
 
 
 ## <a id="about-the-project"></a>💡 About The Project

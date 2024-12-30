@@ -46,7 +46,7 @@ jobs:
           uv run pytest -sv tests/unit
 
   pypi-publish:
-    name: ☁️ upload release to TestPyPI
+    name: ☁️ upload release to PyPI
     runs-on: ubuntu-latest
     needs: [ check_build_trigger, unit_testing ]
     if: |
