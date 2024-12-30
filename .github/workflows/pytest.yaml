@@ -1,68 +1,35 @@
-name: pytest
+name: ci-tests
+
 on:
   workflow_dispatch:
   pull_request:
 
+
+permissions:
+  contents: read
+
 jobs:
-  unit:
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.9", "3.10"]
-        os: [ubuntu-latest]
-    runs-on: ${{ matrix.os }}
-
+  test:
+    runs-on: ubuntu-latest
     steps:
-      - name: Set up Python
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v4
+
+      - name: Install uv & Python
+        uses: astral-sh/setup-uv@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          version: "0.5.11"
+          enable-cache: true
+          python-version: "cpython-3.9.21-linux-x86_64-gnu"
 
-      - name: Checkout this repository
-        uses: actions/checkout@v3
-
-      - uses: pdm-project/setup-pdm@main
-        name: Setup PDM
-        with:
-          architecture: x64
-          prerelease: false
-          enable-pep582: true
-
-      - name: Install dependencies from pdm.lock
+      - name: Lock & Sync All Dependencies
         run: |
-          pdm install --dev
+          uv lock
+          uv sync --all-groups
 
-      - name: Run tests
-        run: pdm run tests_unit
-
-  system:
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.9"]
-        os: [ubuntu-latest]
-
-    runs-on: ${{ matrix.os }}
-
-    steps:
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Checkout this repository
-        uses: actions/checkout@v3
-
-      - uses: pdm-project/setup-pdm@main
-        name: Setup PDM
-        with:
-          architecture: x64
-          prerelease: false
-          enable-pep582: true
-
-      - name: Install dependencies from pdm.lock
+      - name: Run Tests Unit
         run: |
-          pdm install --dev
+          uv run pytest -sv tests/unit
 
-      - name: Run tests
-        run: pdm run tests_system
+      - name: Run Tests System
+        run: |
+          uv run pytest -sv tests/system

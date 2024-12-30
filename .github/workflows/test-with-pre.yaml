@@ -1,4 +1,5 @@
 name: Test --pre
+
 on:
   workflow_dispatch:
   schedule:
@@ -6,36 +7,32 @@ on:
 
 jobs:
   unit:
+    name: Run tests with prereleases
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.9", "3.10"]
+        python-version: ["3.9.21"]
         os: [ubuntu-latest]
-
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Set up Python
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v4
+
+      - name: Install uv & Python
+        uses: astral-sh/setup-uv@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          version: "0.5.11"
+          enable-cache: true
+          python-version: "cpython-3.9.21-linux-x86_64-gnu"
 
-      - name: Checkout this repository
-        uses: actions/checkout@v3
-
-      - uses: pdm-project/setup-pdm@main
-        name: Setup PDM
-        with:
-          architecture: x64
-          prerelease: false
-          enable-pep582: true
-          use-cache: false
-          pip-args: "--pre"
-          pytest-args: "-W error -W ignore::sklearn.exceptions.ConvergenceWarning"
-
-      - name: Install dependencies from pdm.lock
+      - name: Lock dependencies with pre-releases
         run: |
-          pdm install --dev
+          uv lock --prerelease allow
+
+      - name: Sync All Groups
+        run: |
+          uv sync --all-groups
 
       - name: Run tests
-        run: pdm run tests_unit
+        run: |
+          uv run pytest -sv tests/unit
