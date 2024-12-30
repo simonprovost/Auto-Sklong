@@ -5,13 +5,15 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   check_build_trigger:
     name: Check build trigger
     runs-on: ubuntu-latest
     outputs:
       build: ${{ steps.check_build_trigger.outputs.build }}
-
     steps:
       - name: Checkout auto-sklong
         uses: actions/checkout@v4
@@ -19,46 +21,34 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
 
       - id: check_build_trigger
-        name: Check build trigger
+        name: Run check_build_trigger.sh
         run: bash build_tools/github/check_build_trigger.sh
 
   unit_testing:
-    runs-on: ${{ matrix.os }}
-    needs: check_build_trigger
-    if: needs.check_build_trigger.outputs.build
-    strategy:
-      matrix:
-        python-version: [ 3.9 ]
-        os: [ ubuntu-latest ]
-
+    runs-on: ubuntu-latest
     steps:
-      - name: Set up Python
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v4
+
+      - name: Install uv & Python
+        uses: astral-sh/setup-uv@v4
         with:
-          python-version: '3.9'
+          version: "0.5.11"
+          enable-cache: true
+          python-version: "cpython-3.9.21-linux-x86_64-gnu"
 
-      - name: Checkout this repository
-        uses: actions/checkout@v2
-
-      - uses: pdm-project/setup-pdm@main
-        name: Setup PDM
-        with:
-          python-version: 3.9
-          architecture: x64
-          prerelease: false
-          enable-pep582: true
-
-      - name: Install dependencies from pdm.lock
+      - name: Lock & Sync All Dependencies
         run: |
-          pdm install
+          uv lock
+          uv sync --all-groups
 
-      - name: Run tests
-        run: pdm run tests
+      - name: Run Tests Unit
+        run: |
+          uv run pytest -sv tests/unit
 
   pypi-publish:
-    name: ☁️ upload release to PyPI
+    name: ☁️ upload release to TestPyPI
     runs-on: ubuntu-latest
-    needs: [check_build_trigger, unit_testing]
+    needs: [ check_build_trigger, unit_testing ]
     if: |
       always() &&
       needs.check_build_trigger.outputs.build &&
@@ -67,9 +57,26 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: pdm-project/setup-pdm@v3
+      - name: Install uv & Python
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "0.5.11"
+          enable-cache: true
+          python-version: "cpython-3.9.21-linux-x86_64-gnu"
 
-      - name: Publish package distributions to PyPI
-        run: pdm publish
+      - name: Lock & Sync for Release
+        run: |
+          uv lock
+          uv sync --all-groups
+
+      - name: Build distribution
+        run: |
+          uv build
+
+      - name: Publish package to PyPI
+        env:
+          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          uv publish
