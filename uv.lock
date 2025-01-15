@@ -118,7 +118,7 @@ wheels = [
 
 [[package]]
 name = "auto-sklong"
-version = "0.0.3"
+version = "0.0.4"
 source = { editable = "." }
 dependencies = [
     { name = "black" },
@@ -164,7 +164,7 @@ requires-dist = [
     { name = "numpy", specifier = "==1.23.3" },
     { name = "pandas", specifier = ">=1.5.3,<2.0.0" },
     { name = "psutil" },
-    { name = "scikit-longitudinal", specifier = ">=0.0.6" },
+    { name = "scikit-longitudinal", specifier = ">=0.0.7" },
     { name = "scipy", specifier = ">=1.5.0" },
     { name = "smac", specifier = "==2.1.0" },
     { name = "stopit", specifier = ">=1.1.2" },
@@ -2275,7 +2275,7 @@ wheels = [
 
 [[package]]
 name = "scikit-longitudinal"
-version = "0.0.6"
+version = "0.0.7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "deep-forest" },
@@ -2295,9 +2295,9 @@ dependencies = [
     { name = "stopit" },
     { name = "threadpoolctl" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/23/5b/1a2342cba81afc2b65a2e73925881dc4bb5fe43ef3cc2a6c41f362130b21/scikit_longitudinal-0.0.6.tar.gz", hash = "sha256:0eba83581c0e61196bff6ab314e62c273546df0d07a32f454f6e8ca23ce7a99e", size = 1574117 }
+sdist = { url = "https://files.pythonhosted.org/packages/16/b7/5626266682b27debe21ebe5a8831ecffdfa8f479636068df2ef8e6938909/scikit_longitudinal-0.0.7.tar.gz", hash = "sha256:50dbb0956ec85b3f6abc4702281126ef950df7f042502d785cf032a90cb692f5", size = 2821854 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/4e/86/cee9d40623e8d4c983f1772f9986574f36d2d67593076679cfc5f5dbd84e/scikit_longitudinal-0.0.6-py3-none-any.whl", hash = "sha256:eaeb6bf63ba31389b2af853392dca57bec912fdd6b4e79ded9aa3127a1fa0f17", size = 1607643 },
+    { url = "https://files.pythonhosted.org/packages/38/5d/92c272836225d668cae276a416e9d1a172099674edcbd06cba66a7c38356/Scikit_longitudinal-0.0.7-py3-none-any.whl", hash = "sha256:7b8d8cfb0bf5986d5ab8ec7c04007edfe5201a70264a45eebf3604fee23ce451", size = 104128 },
 ]
 
 [[package]]

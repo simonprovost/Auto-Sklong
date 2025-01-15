@@ -2,7 +2,7 @@
 name = "Auto-Sklong"
 description = "A package for automated machine learning based on scikit-learn and sklong to tackle the longitudinal machine learning classificationt tasks."
 readme = "README.md"
-version = "0.0.3"
+version = "0.0.4"
 authors = [
     { name = "Pieter Gijsbers", email = "p.gijsbers@tue.nl" },
     { name = "Provost Simon", email = "s.g.provost@kent.ac.uk" },
@@ -24,7 +24,7 @@ dependencies = [
     "psutil",
     "configspace<1.0.0,>=0.7.1",
     "smac==2.1.0",
-    "Scikit-longitudinal>=0.0.6",
+    "Scikit-longitudinal>=0.0.7",
     "urllib3==1.26.6",
 ]
 
