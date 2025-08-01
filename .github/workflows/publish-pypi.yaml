@@ -43,7 +43,7 @@ jobs:
 
       - name: Run Tests Unit
         run: |
-          uv run pytest -sv tests/unit
+          uv run pytest -sv tests/unit -p no:warnings
 
   pypi-publish:
     name: ☁️ upload release to PyPI

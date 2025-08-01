@@ -285,7 +285,7 @@ Please, start by choosing the installation method that best suits your needs:
     
     5. **Run Tests:**
        ```bash
-       uv run pytest -sv auto_sklong
+       uv run pytest -sv auto_sklong -p no:warnings
        ```
     
     For more information, refer to the [UV documentation](https://docs.astral.sh/uv/).

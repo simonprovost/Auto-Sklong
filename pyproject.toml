@@ -2,7 +2,7 @@
 name = "Auto-Sklong"
 description = "A package for automated machine learning based on scikit-learn and sklong to tackle the longitudinal machine learning classificationt tasks."
 readme = "README.md"
-version = "0.0.4"
+version = "0.0.5"
 authors = [
     { name = "Pieter Gijsbers", email = "p.gijsbers@tue.nl" },
     { name = "Provost Simon", email = "s.g.provost@kent.ac.uk" },
@@ -79,6 +79,9 @@ override-dependencies = [
 py-modules = []
 license-files = []
 
+[tool.setuptools.packages.find]
+include = ["gama*"]
+
 [tool.pytest.ini_options]
 filterwarnings = [
     "error",
@@ -129,7 +132,7 @@ warn_no_return = true
 #
 #####
 
-# uv run pytest -sv tests/unit
-# uv run pytest -sv tests/system
+# uv run pytest -sv tests/unit -p no:warnings
+# uv run pytest -sv tests/system -p no:warnings
 # uv run pre-commit run --all-files
 # uv run mkdocs serve

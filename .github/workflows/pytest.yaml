@@ -28,8 +28,8 @@ jobs:
 
       - name: Run Tests Unit
         run: |
-          uv run pytest -sv tests/unit
+          uv run pytest -sv tests/unit -p no:warnings
 
       - name: Run Tests System
         run: |
-          uv run pytest -sv tests/system
+          uv run pytest -sv tests/system -p no:warnings

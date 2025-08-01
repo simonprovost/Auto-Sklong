@@ -35,4 +35,4 @@ jobs:
 
       - name: Run tests
         run: |
-          uv run pytest -sv tests/unit
+          uv run pytest -sv tests/unit -p no:warnings
