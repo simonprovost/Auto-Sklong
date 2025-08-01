@@ -1,4 +1,5 @@
-# :book: API Reference :book:
+# :book: API Reference 
+# :book: API Reference 
 
 Welcome to the full API documentation of the `Auto-Sklong` AutoML toolbox. :toolbox:
 
@@ -28,4 +29,4 @@ Welcome to the full API documentation of the `Auto-Sklong` AutoML toolbox. :tool
 
 
 !!! tip "Were you looking to update/look-into the `Auto-Skong`'s search space?"
-    We got you covered! Check out the [`search space`](https://simonprovost.github.io/Auto-Sklong/search_space/) page.
+    We got you covered! Check out the [`search space`](../tutorials/search_space.md) page.
