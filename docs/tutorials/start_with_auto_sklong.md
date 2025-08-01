@@ -29,47 +29,47 @@ which is designed to handle temporal dependencies in longitudinal datasets.
         ```python
         import pandas as pd
         import numpy as np
-    
+
         n_rows = 500
-    
+
         columns = [
-        'age', 'gender',
-        'smoke_w1', 'smoke_w2',
-        'cholesterol_w1', 'cholesterol_w2',
-        'blood_pressure_w1', 'blood_pressure_w2',
-        'diabetes_w1', 'diabetes_w2',
-        'exercise_w1', 'exercise_w2',
-        'obesity_w1', 'obesity_w2',
-        'stroke_w2'
+            'age', 'gender',
+            'smoke_w1', 'smoke_w2',
+            'cholesterol_w1', 'cholesterol_w2',
+            'blood_pressure_w1', 'blood_pressure_w2',
+            'diabetes_w1', 'diabetes_w2',
+            'exercise_w1', 'exercise_w2',
+            'obesity_w1', 'obesity_w2',
+            'stroke_w2'
         ]
-    
+
         data = []
-    
+
         for i in range(n_rows):
-        row = {}
-        row['age'] = np.random.randint(40, 71)  
-        row['gender'] = np.random.choice([0, 1])  
-                
-        for feature in ['smoke', 'cholesterol', 'blood_pressure', 'diabetes', 'exercise', 'obesity']:
-        w1 = np.random.choice([0, 1], p=[0.7, 0.3])
-        if w1 == 1:
-        w2 = np.random.choice([0, 1], p=[0.2, 0.8])  
-        else:
-        w2 = np.random.choice([0, 1], p=[0.9, 0.1])  
-        row[f'{feature}_w1'] = w1
-        row[f'{feature}_w2'] = w2
-                
-        if row['smoke_w2'] == 1 or row['cholesterol_w2'] == 1 or row['blood_pressure_w2'] == 1:
-        p_stroke = 0.2  
-        else:
-        p_stroke = 0.05  
-        row['stroke_w2'] = np.random.choice([0, 1], p=[1 - p_stroke, p_stroke])
-                
-        data.append(row)
-    
+            row = {}
+            row['age'] = np.random.randint(40, 71)  
+            row['gender'] = np.random.choice([0, 1])  
+            
+            for feature in ['smoke', 'cholesterol', 'blood_pressure', 'diabetes', 'exercise', 'obesity']:
+                w1 = np.random.choice([0, 1], p=[0.7, 0.3])
+                if w1 == 1:
+                    w2 = np.random.choice([0, 1], p=[0.2, 0.8])  
+                else:
+                    w2 = np.random.choice([0, 1], p=[0.9, 0.1])  
+                row[f'{feature}_w1'] = w1
+                row[f'{feature}_w2'] = w2
+            
+            if row['smoke_w2'] == 1 or row['cholesterol_w2'] == 1 or row['blood_pressure_w2'] == 1:
+                p_stroke = 0.2  
+            else:
+                p_stroke = 0.05  
+            row['stroke_w2'] = np.random.choice([0, 1], p=[1 - p_stroke, p_stroke])
+            
+            data.append(row)
+
         # Create DataFrame
         df = pd.DataFrame(data)
-    
+
         # Save to a new CSV file
         csv_file = './extended_stroke_longitudinal.csv'
         df.to_csv(csv_file, index=False)
@@ -108,7 +108,7 @@ Use `GamaLongitudinalClassifier` to automate pipeline search, prioritizing tempo
 
 ```python
 from gama.GamaLongitudinalClassifier import GamaLongitudinalClassifier
-from gama.search_methods import BayesianOptimisation
+from gama.search_methods.bayesian_optimisation import BayesianOptimisation
 
 automl = GamaLongitudinalClassifier(
     features_group=dataset.feature_groups(),
@@ -126,6 +126,8 @@ automl.fit(dataset.X_train, dataset.y_train)
 ## Step 3: Predict and Evaluate
 
 ```python
+from sklearn.metrics import classification_report
+
 y_pred = automl.predict(dataset.X_test)
 y_prob = automl.predict_proba(dataset.X_test)
 
