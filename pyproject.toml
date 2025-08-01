@@ -1,8 +1,8 @@
 [project]
 name = "Auto-Sklong"
-description = "A package for automated machine learning based on scikit-learn and sklong to tackle the longitudinal machine learning classificationt tasks."
+description = "A package for automated machine learning based on scikit-learn and sklong to tackle the longitudinal machine learning classification tasks."
 readme = "README.md"
-version = "0.0.6"
+version = "0.0.8"
 authors = [
     { name = "Provost Simon", email = "s.g.provost@kent.ac.uk" }, # First author & maintainer
     { name = "Pieter Gijsbers", email = "p.gijsbers@tue.nl" }, # Author of GAMA, credited for the original work
@@ -60,7 +60,7 @@ doc = [
     "mkdocs-material[emoji,imaging]",
 ]
 
-[urls]
+[project.urls]
 Homepage = "https://github.com/simonprovost/Auto-Sklong"
 Documentation = "https://auto-sklong.readthedocs.io/en/latest/"
 Releases = "https://github.com/simonprovost/auto-sklong/releases"
