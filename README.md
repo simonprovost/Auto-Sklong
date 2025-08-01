@@ -129,6 +129,8 @@ y_pred = automl.predict(dataset.X_test)
 print(classification_report(dataset.y_test, y_pred))
 ```
 
+More detailed examples and tutorials can be found in the [documentation](https://auto-sklong.readthedocs.io/en/latest/tutorials/overview/)!
+
 ---
 
 ## <a id="citation"></a>📝 How to Cite
