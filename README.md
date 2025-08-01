@@ -50,13 +50,13 @@
 
 `Auto-Scikit-Longitudinal` (Auto-Sklong) is an Automated Machine Learning (AutoML) library, developed upon the
 [`General Machine Learning Assistant (GAMA)`](https://openml-labs.github.io/gama/master/index.html#) framework, 
-introduces a brand-new [`search space`](https://auto-sklong.readthedocs.io/en/latest/tutorials/search_space/) leveraging both
+introducing a brand-new [`search space`](https://auto-sklong.readthedocs.io/en/latest/tutorials/search_space/) leveraging both
 [`Scikit-Longitudinal`](https://scikit-longitudinal.readthedocs.io/latest/) and [`Scikit-learn`](https://scikit-learn.org/stable/) 
 models to tackle the Longitudinal machine learning classification tasks.
 
-`Auto-Sklong` comes with various search methods to explore the [`search space`](https://auto-sklong.readthedocs.io/en/latest/tutorials/search_space/) introduced, such as `Bayesian Optimisation`.
+For more scientific details, you can refer to our [paper](https://doi.org/10.1109/BIBM62325.2024.10821737) published by `IEEE` in the [IEEE International Conference on Bioinformatics and Biomedicine (BIBM), 2024 Edition](https://ieeexplore.ieee.org/xpl/conhome/10821710/proceeding).
 
-For more details, visit the [official documentation](https://auto-sklong.readthedocs.io/en/latest/).
+`Auto-Sklong` comes with various search methods to explore the [`search space`](https://auto-sklong.readthedocs.io/en/latest/tutorials/search_space/) introduced, such as `Bayesian Optimisation`.  For more details, visit the [official documentation](https://auto-sklong.readthedocs.io/en/latest/).
 
 ---
 

@@ -9,18 +9,16 @@ hide:
 
 Within each paper's tab, we will point to which Git branch to see the experiments of a given paper.
 
-=== "Scikit-Longitudinal official paper"
+=== "Auto-Sklong official paper"
 
     **Paper Name**: Auto-Sklong: A New AutoML System for Longitudinal Classification
 
     **Dataset Source**: https://www.elsa-project.ac.uk/
 
+    **Paper Link**: [10.1109/BIBM62325.2024.10821737](https://doi.org/10.1109/BIBM62325.2024.10821737)
+    
     **Git branch**: Incoming.
 
-    **DOI**: [10.1109/BIBM62325.2024.10821737](https://doi.org/10.1109/BIBM62325.2024.10821737)
-
-    !!! success "Status"
-        Paper has been accapted to 2024 IEEE International Conference on Bioinformatics and Biomedicine (BIBM)
 
 !!! tip "Before You Begin"
     Ensure you have your dataset ready in a compatible format (e.g., CSV) and are familiar with the basic usage. 
@@ -34,9 +32,7 @@ Within each paper's tab, we will point to which Git branch to see the experiment
 
     **Publisher**: Journal of Open Source Software (JOSS)
 
-    **Paper Status**: Pre-Approved, current public peer review, available at [JOSS-Review](https://github.com/openjournals/joss-reviews/issues/8481)
-
-    **Paper Link**: Will be available at [JOSS](https://joss.theoj.org/)
+    **Paper Link**: [https://joss.theoj.org/papers/10.21105/joss.08481](https://joss.theoj.org/papers/10.21105/joss.08481)
 
     **Used For**: This library is used throughout the search space of the Auto-Sklong system.
 
