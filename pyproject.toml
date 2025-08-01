@@ -2,10 +2,10 @@
 name = "Auto-Sklong"
 description = "A package for automated machine learning based on scikit-learn and sklong to tackle the longitudinal machine learning classificationt tasks."
 readme = "README.md"
-version = "0.0.5"
+version = "0.0.6"
 authors = [
-    { name = "Pieter Gijsbers", email = "p.gijsbers@tue.nl" },
-    { name = "Provost Simon", email = "s.g.provost@kent.ac.uk" },
+    { name = "Provost Simon", email = "s.g.provost@kent.ac.uk" }, # First author & maintainer
+    { name = "Pieter Gijsbers", email = "p.gijsbers@tue.nl" }, # Author of GAMA, credited for the original work
 ]
 license = { text = "MIT" }
 classifiers = [
@@ -61,9 +61,11 @@ doc = [
 ]
 
 [urls]
-github = "https://github.com/simonprovost/Auto-Sklong"
-documentation = "https://simonprovost.github.io/Auto-Sklong/"
-"bug tracker" = "https://github.com/simonprovost/Auto-Sklong/issues"
+Homepage = "https://github.com/simonprovost/Auto-Sklong"
+Documentation = "https://auto-sklong.readthedocs.io/en/latest/"
+Releases = "https://github.com/simonprovost/auto-sklong/releases"
+Repository = "https://github.com/simonprovost/Auto-Sklong"
+Issues = "https://github.com/simonprovost/Auto-Sklong/issues"
 
 [project.scripts]
 gama = "gama.utilities.cli:main"
