@@ -54,9 +54,18 @@ introducing a brand-new [`search space`](https://auto-sklong.readthedocs.io/en/l
 [`Scikit-Longitudinal`](https://scikit-longitudinal.readthedocs.io/latest/) and [`Scikit-learn`](https://scikit-learn.org/stable/) 
 models to tackle the Longitudinal machine learning classification tasks.
 
-For more scientific details, you can refer to our [paper](https://doi.org/10.1109/BIBM62325.2024.10821737) published by `IEEE` in the [IEEE International Conference on Bioinformatics and Biomedicine (BIBM), 2024 Edition](https://ieeexplore.ieee.org/xpl/conhome/10821710/proceeding).
+**Wait, what is Longitudinal Data — In layman's terms ?**
 
-`Auto-Sklong` comes with various search methods to explore the [`search space`](https://auto-sklong.readthedocs.io/en/latest/tutorials/search_space/) introduced, such as `Bayesian Optimisation`.  For more details, visit the [official documentation](https://auto-sklong.readthedocs.io/en/latest/).
+Longitudinal data is a "time-lapse" snapshot of the same subject, entity, or group tracked over time-periods,
+similar to checking in on patients to see how they change. For instance, doctors may monitor a patient's blood pressure,
+weight, and cholesterol every year for a decade to identify health trends or risk factors. This data is more useful for
+predicting future results than a one-time survey because it captures evolution, patterns, and cause-effect throughout
+time.
+
+**Not enough?**
+
+* For more scientific details, you can refer to our [paper](https://doi.org/10.1109/BIBM62325.2024.10821737) published by `IEEE` in the [IEEE International Conference on Bioinformatics and Biomedicine (BIBM), 2024 Edition](https://ieeexplore.ieee.org/xpl/conhome/10821710/proceeding).
+* `Auto-Sklong` comes with various search methods to explore the [`search space`](https://auto-sklong.readthedocs.io/en/latest/tutorials/search_space/) introduced, such as `Bayesian Optimisation`.  For more details, visit the [official documentation](https://auto-sklong.readthedocs.io/en/latest/).
 
 ---
 
