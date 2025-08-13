@@ -2,22 +2,27 @@ import logging
 import os
 import time
 from datetime import datetime
-from typing import Callable, Tuple, Optional, Sequence
+from typing import Callable
+from typing import Tuple, Optional, Sequence
 
 import numpy as np
 import stopit
-from sklearn.base import TransformerMixin, is_classifier
+from sklearn.base import TransformerMixin
+from sklearn.base import is_classifier
 from sklearn.model_selection import (
     ShuffleSplit,
-    cross_validate,
     check_cv,
     StratifiedShuffleSplit,
 )
+from sklearn.model_selection import cross_validate
+from sklearn.utils.class_weight import compute_sample_weight
 
-from gama.GamaPipeline import GamaPipelineTypeUnion, GamaPipeline, GamaPipelineType
-from gama.genetic_programming.components import Individual, PrimitiveNode, Fitness
+from gama.GamaPipeline import GamaPipelineTypeUnion, GamaPipelineType, GamaPipeline
+from gama.genetic_programming.components import Fitness
+from gama.genetic_programming.components import Individual, PrimitiveNode
 from gama.utilities.evaluation_library import Evaluation
 from gama.utilities.generic.stopwatch import Stopwatch
+from gama.utilities.longitudinal_config_space import NoResampling, SampleWeight
 from gama.utilities.metrics import Metric
 
 log = logging.getLogger(__name__)
@@ -41,17 +46,21 @@ def compile_individual(
     steps = [
         (str(i), primitive_node_to_sklearn(primitive))
         for i, primitive in enumerate(individual.primitives)
+        if not isinstance(primitive_node_to_sklearn(primitive), (NoResampling, SampleWeight))
     ]
     if preprocessing_steps:
         steps += list(reversed(preprocessing_steps))
-    if gama_pipeline_type:
-        return GamaPipeline(
-            list(reversed(steps)),
-            pipeline_type=gama_pipeline_type,
-            *args,
-            **kwargs,  # type: ignore
-        )
-    return GamaPipeline(list(reversed(steps)))
+    pipeline = GamaPipeline(
+        list(reversed(steps)),
+        pipeline_type=gama_pipeline_type,
+        *args,
+        **kwargs,
+    )
+    pipeline.use_sample_weight = any(
+        isinstance(primitive_node_to_sklearn(primitive), SampleWeight)
+        for primitive in individual.primitives
+    )
+    return pipeline
 
 
 def object_is_valid_pipeline(o: object) -> bool:
@@ -120,6 +129,11 @@ def evaluate_pipeline(
                     new_splits.append((subsample_idx, test))
                 splitter = new_splits
 
+            fit_params = {}
+            if getattr(pipeline, "use_sample_weight", False):
+                sw = compute_sample_weight(class_weight="balanced", y=y_train)
+                fit_params = {f"sample_weight": sw}
+
             result = cross_validate(
                 pipeline,
                 x,
@@ -128,6 +142,7 @@ def evaluate_pipeline(
                 return_estimator=True,
                 scoring=dict([(m.name, m) for m in metrics]),
                 error_score="raise",
+                fit_params=fit_params,
             )
             scores = tuple(np.mean(result[f"test_{m.name}"]) for m in metrics)
             estimators = result["estimator"]

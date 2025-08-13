@@ -16,6 +16,9 @@ from gama.configuration.longitudinal_classification_task.preprocessors import (
 from gama.genetic_programming.longitudinal.constraints_longitudinal import (
     LongitudinalSearchSpaceConstraint,
 )
+from gama.configuration.longitudinal_classification_task.resampling import (
+    LongitudinalResamplingConfig,
+)
 
 # Classifiers & Preprocessors 🚀
 
@@ -30,8 +33,8 @@ LongitudinalConstraints = LongitudinalSearchSpaceConstraint(
                 "ExtraTreesClassifier",
                 "KNeighborsClassifier",
                 "LinearSVC",
-                "DeepForestClassifier",
                 "GradientBoostingClassifier",
+                "DeepForestClassifier",
             ],
         },
         "Default": {
@@ -54,6 +57,7 @@ config_space = cs.ConfigurationSpace(
         "data_preparation": "data_preparation",
         "preprocessors": "preprocessors",
         "estimators": "classifiers",
+        "resampling": "resampling",
     }
 )
 
@@ -66,6 +70,8 @@ classifier_config.setup_classifiers()
 preprocessor_config = LongitudinalPreprocessorConfig(config_space)
 preprocessor_config.setup_preprocessors()
 
+resampling_config = LongitudinalResamplingConfig(config_space)
+resampling_config.setup_resampling()
 
 # Extra Dynamic Hyperparameters 🚀
 

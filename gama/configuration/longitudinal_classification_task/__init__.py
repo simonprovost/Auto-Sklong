@@ -1,2 +1,4 @@
 from .classifiers import LongitudinalClassifierConfig
+from .data_preparation import LongitudinalDataPreparationConfig
 from .preprocessors import LongitudinalPreprocessorConfig
+from .resampling import LongitudinalResamplingConfig  # New

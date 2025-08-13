@@ -102,39 +102,55 @@ class GamaLongitudinalClassifier(Gama):
         self._update_feature_groups_callback = update_feature_groups_callback
         self._feature_list_names = feature_list_names
 
-        if (
+        has_preprocessors = (
             "preprocessors" in self.search_space.meta
             and self.search_space.meta["preprocessors"]
-            not in self.search_space.get_hyperparameter_names()
-        ) or ("preprocessors" not in self.search_space.meta):
+            in self.search_space.get_hyperparameter_names()
+        )
+        has_resampling = (
+            "resampling" in self.search_space.meta
+            and self.search_space.meta["resampling"]
+            in self.search_space.get_hyperparameter_names()
+        )
+
+        if not has_preprocessors and not has_resampling:
+            pipeline_length = 2
             if max_pipeline_length is None:
                 log.info(
-                    "Setting `max_pipeline_length` to 2 "
-                    "because there are no preprocessing steps in the search space."
+                    r"Setting `max_pipeline_length` to 2 because there are no preprocessing or resampling steps in the search space."
                 )
-                max_pipeline_length = 2
-            elif max_pipeline_length > 2:
+                max_pipeline_length = pipeline_length
+            elif max_pipeline_length > pipeline_length:
                 raise ValueError(
-                    f"`max_pipeline_length` can't be {max_pipeline_length} "
-                    "because there are no preprocessing steps in the search space."
+                    f"`max_pipeline_length` cannot exceed {pipeline_length} because there are no preprocessing or resampling steps in the search space."
+                )
+        elif has_preprocessors and has_resampling:
+            pipeline_length = 4
+            if max_pipeline_length is None:
+                max_pipeline_length = pipeline_length
+            elif max_pipeline_length < pipeline_length:
+                log.warning(
+                    f"[CAUTIOUS] A `max_pipeline_length` of {max_pipeline_length} might be too short given both preprocessing and resampling are available."
+                )
+            elif max_pipeline_length > pipeline_length:
+                log.warning(
+                    f"[CAUTIOUS] A `max_pipeline_length` of {max_pipeline_length} exceeds the available {pipeline_length} steps."
                 )
         else:
+            pipeline_length = 3
             if max_pipeline_length is None:
-                max_pipeline_length = 3
-            elif max_pipeline_length < 3:
+                max_pipeline_length = pipeline_length
+            elif max_pipeline_length < pipeline_length:
                 log.warning(
-                    f"[CAUTIOUS] Setting `max_pipeline_length` to "
-                    f"{max_pipeline_length} can be problematic because there most "
-                    f"probably are preprocessing steps available in the search space."
+                    f"[CAUTIOUS] A `max_pipeline_length` of {max_pipeline_length} may be too short when one optional step is available."
                 )
-            elif max_pipeline_length > 3:
+            elif max_pipeline_length > pipeline_length:
                 log.warning(
-                    f"[CAUTIOUS] Setting `max_pipeline_length` to "
-                    f"{max_pipeline_length} can be problematic because there most "
-                    f"probably are only estimators/preprocessing steps available in "
-                    f"the search space."
+                    f"[CAUTIOUS] A `max_pipeline_length` of {max_pipeline_length} exceeds the available {pipeline_length} steps."
                 )
-        max_start_length = 3 if max_pipeline_length is None else max_pipeline_length
+
+        max_start_length = max_pipeline_length
+
         self._operator_set = OperatorSet(
             mutate=partial(  # type: ignore #https://github.com/python/mypy/issues/1484
                 random_longitudinal_valid_mutation_in_place,

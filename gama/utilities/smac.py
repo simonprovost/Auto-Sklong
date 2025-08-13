@@ -179,9 +179,16 @@ def config_to_longitudinal_individual(
         "preprocessors" in config_space.meta
         and config_space.meta["preprocessors"] in config.keys()
     ):
-        max_length = 2
+        max_length = 3
     else:
-        max_length = 1
+        max_length = 2
+
+    if (
+        "resampling" in config_space.meta
+        and config_space.meta["resampling"] in config.keys()
+    ):
+        max_length += 1
+
     return Individual(
         main_node=_config_to_longitudinal_primitive_node(
             config=config,

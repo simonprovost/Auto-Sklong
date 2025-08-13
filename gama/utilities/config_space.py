@@ -23,6 +23,9 @@ from gama.utilities.longitudinal_config_space import (  # type: ignore
     SepWavStackingDecisionTree,
     SepWavStackingRandomForest,
     CascadeForestClassifier,
+    NoResampling,
+    SampleWeight,
+    RandomUnderSampler,
 )
 
 
@@ -144,6 +147,9 @@ def get_longitudinal_estimator_by_name(
         "SepWavStackingLogisticRegression": SepWavStackingLogisticRegression,
         "SepWavStackingDecisionTree": SepWavStackingDecisionTree,
         "SepWavStackingRandomForest": SepWavStackingRandomForest,
+        "NoResampling": NoResampling,
+        "SampleWeight": SampleWeight,
+        "RandomUnderSampler": RandomUnderSampler,
     }
     custom_conventional_estimators = {
         "DeepForestClassifier": CascadeForestClassifier,

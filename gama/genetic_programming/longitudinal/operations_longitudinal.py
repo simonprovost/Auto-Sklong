@@ -3,6 +3,7 @@ import random
 from typing import List, Optional, Any
 
 import ConfigSpace as cs
+from ConfigSpace import Configuration
 
 from gama.genetic_programming.components import (
     Primitive,
@@ -21,14 +22,13 @@ def _sample_and_ignore_dummy_techniques(
     config: cs.Configuration,
     technique_name_to_ignore: str = "Dummy_To_Ignore",
 ) -> cs.Configuration:
-    """ConfigSpace do not allow adding forbidden
-    clauses on the default choice of a hyperparameter.
+    """ConfigSpace does not allow adding forbidden clauses on the default choice of a hyperparameter.
 
-    Dummy_To_Ignore becomes default and is ignored / found
-    an alternative when picked by sample_configuration.
+    Dummy_To_Ignore becomes default and is ignored / found an alternative when picked by sample_configuration.
     Nonetheless, for better maintainability, "Dummy_To_Ignore" can be changed,
     for example in the future it could be in the meta of the config so that
-    it can be changed in one place by the user, i.e in /configuratins.
+    it can be changed in one place by the user, i.e in /configurations.
+    Updated to include resampling stage.
     """
     is_data_preparation_to_ignore = (
         "data_preparation" in config_space.meta
@@ -42,16 +42,22 @@ def _sample_and_ignore_dummy_techniques(
         "estimators" in config_space.meta
         and config[config_space.meta["estimators"]] == technique_name_to_ignore
     )
+    is_resampling_to_ignore = (
+        "resampling" in config_space.meta
+        and config[config_space.meta["resampling"]] == technique_name_to_ignore
+    )
 
     if (
         is_data_preparation_to_ignore
         or is_estimator_to_ignore
         or is_preprocessor_to_ignore
+        or is_resampling_to_ignore
     ):
         while (
             is_data_preparation_to_ignore
             or is_estimator_to_ignore
             or is_preprocessor_to_ignore
+            or is_resampling_to_ignore
         ):
             temp_config = config_space.sample_configuration()
             is_data_preparation_to_ignore = (
@@ -69,10 +75,16 @@ def _sample_and_ignore_dummy_techniques(
                 and temp_config[config_space.meta["estimators"]]
                 == technique_name_to_ignore
             )
+            is_resampling_to_ignore = (
+                "resampling" in config_space.meta
+                and temp_config[config_space.meta["resampling"]]
+                == technique_name_to_ignore
+            )
             if (
                 not is_data_preparation_to_ignore
                 and not is_estimator_to_ignore
                 and not is_preprocessor_to_ignore
+                and not is_resampling_to_ignore
             ):
                 return temp_config
     return config
@@ -207,7 +219,7 @@ def random_longitudinal_primitive_node(
 def create_longitudinal_random_expression(
     config_space: cs.ConfigurationSpace,
     min_length: int = 2,
-    max_length: int = 3,
+    max_length: int = 4,
 ) -> PrimitiveNode:
     """Create at least min_length and at most max_length chained PrimitiveNodes.
 
@@ -228,7 +240,7 @@ def create_longitudinal_random_expression(
 
 
 def _config_to_longitudinal_primitive_node(
-    config: cs.Configuration,
+    config: Configuration,
     config_meta: dict,
     conditions: List[Any],
     config_length: Optional[int] = None,
@@ -236,13 +248,9 @@ def _config_to_longitudinal_primitive_node(
     """Create a PrimitiveNode from a configuration. If config_length is specified, the
     PrimitiveNode will have at most config_length PrimitiveNodes.
 
-    copy from gama/genetic_programming/operations.py with some modification, which are:
-    1. We prepare the data_preparation and estimator first.
-    2. We use _config_component_to_primitive_node with a different exclude_keys list,
-    which is ["data_preparation", "estimators", "preprocessors"] instead of
-    ["estimators", "preprocessors"]
-    3. If the preprocessor option is None, we don't create a preprocessor node.
-    4. If config_length is 2, we don't create a preprocessor node.
+    Modified to include resampling step before data_preparation, skipping NoResampling
+    and SampleWeight nodes as they are handled in compile_individual. Always includes
+    data_preparation to ensure valid LongitudinalPipeline.
     """
     (
         data_preparation_primitive,
@@ -252,7 +260,7 @@ def _config_to_longitudinal_primitive_node(
         config,
         config_meta,
         conditions,
-        ["data_preparation", "estimators", "preprocessors"],
+        ["resampling", "data_preparation", "estimators", "preprocessors"],
         retrieve_estimator=get_longitudinal_estimator_by_name,
     )
     estimator_primitive, estimator_terminals = _config_component_to_primitive_node(
@@ -260,7 +268,7 @@ def _config_to_longitudinal_primitive_node(
         config,
         config_meta,
         conditions,
-        ["data_preparation", "estimators", "preprocessors"],
+        ["resampling", "data_preparation", "estimators", "preprocessors"],
         retrieve_estimator=get_longitudinal_estimator_by_name,
     )
     data_preparation_node = PrimitiveNode(
@@ -268,15 +276,38 @@ def _config_to_longitudinal_primitive_node(
         data_node=DATA_TERMINAL,
         terminals=data_preparation_terminals,
     )
-    if isinstance(config_length, int) and config_length <= 2:
+    if isinstance(config_length, int) and config_length < 3:
         # Create a PrimitiveNode for the data_preparation
         return PrimitiveNode(
             estimator_primitive,
             data_node=data_preparation_node,
             terminals=estimator_terminals,
         )
+
+    previous_node = data_preparation_node
+    resampling_key = config_meta.get("resampling")
+    if resampling_key in config.config_space.get_hyperparameter_names() and config.config_space[resampling_key] not in ["NoResampling", "SampleWeight"]:
+        (
+            resampling_primitive,
+            resampling_terminals,
+        ) = _config_component_to_primitive_node(
+            "resampling",
+            config,
+            config_meta,
+            conditions,
+            ["resampling", "data_preparation", "estimators", "preprocessors"],
+            retrieve_estimator=get_longitudinal_estimator_by_name,
+        )
+        resampling_node = PrimitiveNode(
+            resampling_primitive,
+            data_node=previous_node,
+            terminals=resampling_terminals,
+        )
+        previous_node = resampling_node
+
+
     preprocessor_node = None
-    if config[config_meta["preprocessors"]] != "None":
+    if config[config_meta["preprocessors"]] != "None" and (config_length is None or config_length >= 3):
         (
             preprocessor_primitive,
             preprocessor_terminals,
@@ -285,20 +316,19 @@ def _config_to_longitudinal_primitive_node(
             config,
             config_meta,
             conditions,
-            ["data_preparation", "estimators", "preprocessors"],
+            ["resampling", "data_preparation", "estimators", "preprocessors"],
             retrieve_estimator=get_longitudinal_estimator_by_name,
         )
-        # Create a PrimitiveNode for the preprocessor and chain it to the
-        # data_preparation
+        # Chain preprocessor to previous (resampling or data_preparation)
         preprocessor_node = PrimitiveNode(
             preprocessor_primitive,
-            data_node=data_preparation_node,
+            data_node=previous_node,
             terminals=preprocessor_terminals,
         )
 
-    # Create a PrimitiveNode for the classifier and chain it to the preprocessor
+    # Chain estimator to preprocessor or previous (resampling or data_preparation)
     return PrimitiveNode(
         estimator_primitive,
-        data_node=preprocessor_node or data_preparation_node,
+        data_node=preprocessor_node or previous_node,
         terminals=estimator_terminals,
     )

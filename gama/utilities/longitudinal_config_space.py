@@ -9,6 +9,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.utils.multiclass import unique_labels
+from imblearn.under_sampling import RandomUnderSampler
+from sklearn.base import TransformerMixin, BaseEstimator
 
 
 class AggrFuncMean(AggrFunc):
@@ -30,6 +32,15 @@ class AggrFuncMean(AggrFunc):
             num_cpus=num_cpus,
         )
 
+    def transform(self, X, y=None):
+        self.prepare_data(X, y)
+        (
+            transformed_dataset,
+            _,
+            _,
+            _,
+        ) = self._transform()
+        return transformed_dataset
 
 class AggrFuncMedian(AggrFunc):
     def __init__(
@@ -50,6 +61,16 @@ class AggrFuncMedian(AggrFunc):
             num_cpus=num_cpus,
         )
 
+    def transform(self, X, y=None):
+        self.prepare_data(X, y)
+        (
+            transformed_dataset,
+            _,
+            _,
+            _,
+        ) = self._transform()
+        return transformed_dataset
+
 
 class AggrFuncMode(AggrFunc):
     def __init__(
@@ -69,6 +90,16 @@ class AggrFuncMode(AggrFunc):
             parallel=parallel,
             num_cpus=num_cpus,
         )
+
+    def transform(self, X, y=None):
+        self.prepare_data(X, y)
+        (
+            transformed_dataset,
+            _,
+            _,
+            _,
+        ) = self._transform()
+        return transformed_dataset
 
 
 class SepWavMajorityVoting(SepWav):
@@ -301,9 +332,33 @@ class CascadeForestClassifier(CascadeForestClassifier):
             verbose=verbose,
         )
 
-    def fit(self, X, y):
+    def fit(self, X, y, sample_weight=None):
         if self.classes_ is None:
             self.classes_ = unique_labels(y)
-        super().fit(X, y)
+        super().fit(X, y, sample_weight=sample_weight)
         print("CascadeForestClassifier is fitted.")
         return self
+
+class NoResampling(TransformerMixin, BaseEstimator):
+    def __init__(self):
+        pass
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        return X
+
+class SampleWeight(TransformerMixin, BaseEstimator):
+    def __init__(self):
+        pass
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        return X
+
+class RandomUnderSampler(RandomUnderSampler):
+    def __init__(self, sampling_strategy="auto"):
+        super().__init__(sampling_strategy=sampling_strategy)
