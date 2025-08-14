@@ -18,3 +18,5 @@ main.py
 __pypackages__/**
 
 .pdm-python
+
+.python-version
