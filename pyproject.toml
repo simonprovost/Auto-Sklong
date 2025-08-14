@@ -2,7 +2,7 @@
 name = "Auto-Sklong"
 description = "A package for automated machine learning based on scikit-learn and sklong to tackle the longitudinal machine learning classification tasks."
 readme = "README.md"
-version = "0.0.9"
+version = "0.0.10"
 authors = [
     { name = "Provost Simon", email = "s.g.provost@kent.ac.uk" }, # First author & maintainer
     { name = "Pieter Gijsbers", email = "p.gijsbers@tue.nl" }, # Author of GAMA, credited for the original work
@@ -24,8 +24,10 @@ dependencies = [
     "psutil",
     "configspace<1.0.0,>=0.7.1",
     "smac==2.1.0",
-    "Scikit-longitudinal>=0.0.7",
+    "Scikit-longitudinal>=0.1.1",
     "urllib3==1.26.6",
+    "imbalanced-learn>=0.12.4",
+    "pyrfr>=0.9.0",
 ]
 
 [dependency-groups]
@@ -83,7 +85,8 @@ py-modules = []
 license-files = []
 
 [tool.setuptools.packages.find]
-include = ["gama*"]
+include = ["gama*", "experiments*"]
+
 
 [tool.pytest.ini_options]
 filterwarnings = [
