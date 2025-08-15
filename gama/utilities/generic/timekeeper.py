@@ -47,9 +47,14 @@ class TimeKeeper:
     def total_time_remaining(self) -> float:
         """Return time remaining in seconds."""
         if self.total_time is not None:
-            return self.total_time - sum(
+            remain = self.total_time - sum(
                 map(lambda a: a.stopwatch.elapsed_time, self.activities)
             )
+            log.debug(
+                f"Total time remaining: {remain:.4f}s "
+                f"({self.total_time} - {sum(map(lambda a: a.stopwatch.elapsed_time, self.activities))})"
+            )
+            return remain
         raise RuntimeError(
             "Time Remaining only available if `total_time` was set on init."
         )
