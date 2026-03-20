@@ -138,8 +138,7 @@ nav:
         - "Asynchronous Evolutionary Algorithm (Async EA) (redirect to GAMA)": https://openml-labs.github.io/gama/master/api/index.html#asyncea
         - "Asynchronous Successive Halving (ASHA) (redirect to GAMA)": https://openml-labs.github.io/gama/master/api/index.html#asynchronoussuccessivehalving
         - "Random Search (redirect to GAMA)": https://openml-labs.github.io/gama/master/api/index.html#randomsearch
-  - "Contributing": https://scikit-longitudinal.readthedocs.io/latest/contribution/
+  - "Contributing": https://github.com/simonprovost/Auto-Sklong/blob/main/CONTRIBUTING.md
   - "Releases": https://github.com/simonprovost/auto-sklong/releases
   - "FAQ": faq.md
   - "Publications": publications.md
-
